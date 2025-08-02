@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.chapter_click {
+    cursor: pointer;
+}
+.chapter_click:hover{
+  color: brown;
+  text-decoration: underline;
+}
