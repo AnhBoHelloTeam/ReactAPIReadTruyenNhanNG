@@ -3,6 +3,7 @@ import axios from "axios";
 import {Helmet} from "react-helmet";
 import {Container, Row, Card, Col, Button, Badge} from "react-bootstrap"
 import {Link} from "react-router-dom";
+import Menu from './Include/Menu';
 const Home = () => {
   // useTate laf 1 mang lay data
   const [getdata, setData]= useState([]);
@@ -33,6 +34,7 @@ const Home = () => {
         <title>{getdata.data.data.seoOnPage.titleHead}</title>
       </Helmet>
       <Container>
+        <Menu></Menu>
         <Row>
           <Col>
             <Card>
