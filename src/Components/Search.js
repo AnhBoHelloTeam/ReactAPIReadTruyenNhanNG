@@ -2,21 +2,21 @@ import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import {Helmet} from "react-helmet";
 import {Container, Row, Card, Col, Button, Badge, Pagination} from "react-bootstrap"
-import { Link} from "react-router-dom";
+import { Link, useParams, useSearchParams} from "react-router-dom";
 import Menu from './Include/Menu';
-const Home = () => {
-  // useTate laf 1 mang lay data
-  const [getdata, setData]= useState([]);
-  // ch cs duwx lieu thi hien loading
-  const [loading, setLoading]= useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [error, setError]= useState(null);
-  const items = getdata?.data?.items;
-  const itemsPerPage = 24;
+const Search = () => {
+    const [searchParams] = useSearchParams();
+    const query = searchParams.get("query");
+    const [getdata, setData]= useState([]);
+    const [loading, setLoading]= useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [error, setError]= useState(null);
+    const items = getdata?.data?.items;
+    const itemsPerPage = 24;
   useEffect(()=>{
     const fetchData = async() =>{
       try{
-        const response = await axios.get(`https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=${currentPage}`);
+        const response = await axios.get(`https://otruyenapi.com/v1/api/tim-kiem?keyword=${query}&page=${currentPage}`);
         //`https://otruyenapi.com/v1/api/home?page=${currentPage}`
         setData(response.data);
         setLoading(false);
@@ -27,7 +27,7 @@ const Home = () => {
         }
     };
       fetchData();
-    },[currentPage]);
+    },[query,currentPage]);
 
     if(loading) return <p>loading...</p>
     if(error) return <p>Error: {error}</p>
@@ -87,6 +87,7 @@ const Home = () => {
           <Col>
             <Card>
               <Card.Body>
+                <Card.Title>Keyword Search : {query}</Card.Title>
                 <Card.Title>{getdata.data.seoOnPage.titleHead}</Card.Title>
                 {getdata.data.seoOnPage.descriptionHead}
               </Card.Body>
@@ -160,4 +161,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Search;

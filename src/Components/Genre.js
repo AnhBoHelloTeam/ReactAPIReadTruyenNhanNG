@@ -2,32 +2,32 @@ import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import {Helmet} from "react-helmet";
 import {Container, Row, Card, Col, Button, Badge, Pagination} from "react-bootstrap"
-import { Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import Menu from './Include/Menu';
-const Home = () => {
+const Genre = () => {
+  const {slug} = useParams();
   // useTate laf 1 mang lay data
   const [getdata, setData]= useState([]);
+  const itemsPerPage = 24;
+  const [currentPage, setCurrentPage] = useState(1);
   // ch cs duwx lieu thi hien loading
   const [loading, setLoading]= useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const [error, setError]= useState(null);
-  const items = getdata?.data?.items;
-  const itemsPerPage = 24;
+  const items = getdata?.data?.data?.items;
   useEffect(()=>{
     const fetchData = async() =>{
       try{
-        const response = await axios.get(`https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=${currentPage}`);
-        //`https://otruyenapi.com/v1/api/home?page=${currentPage}`
-        setData(response.data);
+        const response = await axios.get(`https://otruyenapi.com/v1/api/the-loai/${slug}?page=${currentPage}`);
+        setData(response);
         setLoading(false);
-        console.log(response);
+        //console.log(response);
       } catch(error) {
           setError(error.message);
           setLoading(false);
         }
     };
       fetchData();
-    },[currentPage]);
+    },[slug, currentPage]);
 
     if(loading) return <p>loading...</p>
     if(error) return <p>Error: {error}</p>
@@ -42,12 +42,12 @@ const Home = () => {
     return (
       <>
       <Helmet>
-        <title>{getdata.data.seoOnPage.titleHead}</title>
+        <title>{getdata.data.data.seoOnPage.titleHead}</title>
       </Helmet>
       <Container>
         <Menu></Menu>
 
-          {/* Pagination Controls */}
+        {/* Pagination Controls */}
 
         <Pagination className="pagination-container">
           {/* Previous Button */}
@@ -87,8 +87,8 @@ const Home = () => {
           <Col>
             <Card>
               <Card.Body>
-                <Card.Title>{getdata.data.seoOnPage.titleHead}</Card.Title>
-                {getdata.data.seoOnPage.descriptionHead}
+                <Card.Title>{getdata.data.data.seoOnPage.titleHead}</Card.Title>
+                {getdata.data.data.seoOnPage.descriptionHead}
               </Card.Body>
             </Card>             
           </Col>
@@ -120,44 +120,9 @@ const Home = () => {
             </Col>
           )}  
         </Row>
-        {/* Pagination Controls */}
-
-        <Pagination className="pagination-container">
-          {/* Previous Button */}
-          <Pagination.Prev
-            onClick={() =>  currentPage > 1 && paginate(currentPage -1)}
-            disabled= {currentPage === 1}
-          />
-
-          {[...Array(totalPages)].map((_, index) =>{
-            const pageNumber = index + 1;
-
-            const rangeStart = Math.floor((currentPage - 1) / 5) * 5 + 1;
-            const rangeEnd = Math.min(rangeStart + 4, totalPages);
-
-            if(pageNumber >= rangeStart && pageNumber <= rangeEnd){
-              return(
-                <Pagination.Item
-                  key={pageNumber}
-                  active={pageNumber === currentPage}
-                  onClick={() => paginate(pageNumber)}
-                >
-                  {pageNumber}
-                </Pagination.Item>
-              );
-            }
-            return null;
-          })}
-
-          {/* Next Button */}
-          <Pagination.Next
-            onClick={() =>  currentPage < totalPages && paginate(currentPage +1)}
-            disabled= {currentPage === totalPages}
-          />
-        </Pagination>
       </Container>
         </>
     );
 };
 
-export default Home;
+export default Genre;

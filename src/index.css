@@ -19,3 +19,17 @@ code {
   color: brown;
   text-decoration: underline;
 }
+
+.dropdown-menu.show{
+  height: 500px;
+  overflow: auto;
+}
+
+.pagination-container{
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background-color: #fff;
+  padding: 10px 0;
+  z-index: 1000;
+}
