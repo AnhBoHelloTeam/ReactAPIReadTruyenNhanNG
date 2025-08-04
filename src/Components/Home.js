@@ -1,69 +1,111 @@
-import React, { useEffect, useState } from 'react'
-import axios from "axios";
-import {Helmet} from "react-helmet";
-import {Container, Row, Card, Col, Button, Badge, Pagination} from "react-bootstrap"
-import { Link} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Helmet } from 'react-helmet';
+import { Container, Row, Col, Card, Button, Badge, Pagination } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
+
 const Home = () => {
-  // useTate laf 1 mang lay data
-  const [getdata, setData]= useState([]);
-  // ch cs duwx lieu thi hien loading
-  const [loading, setLoading]= useState(true);
+  const [getdata, setData] = useState([]);
+  const [hotComics, setHotComics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [error, setError]= useState(null);
   const items = getdata?.data?.items;
   const itemsPerPage = 24;
-  useEffect(()=>{
-    const fetchData = async() =>{
-      try{
-        const response = await axios.get(`https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=${currentPage}`);
-        //`https://otruyenapi.com/v1/api/home?page=${currentPage}`
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=${currentPage}`
+        );
         setData(response.data);
         setLoading(false);
-        console.log(response);
-      } catch(error) {
-          setError(error.message);
-          setLoading(false);
-        }
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
     };
-      fetchData();
-    },[currentPage]);
+    fetchData();
+  }, [currentPage]);
 
-    if(loading) return <p>loading...</p>
-    if(error) return <p>Error: {error}</p>
-
-    //tinhs toán phân trang 
-    const totalItems = getdata?.data?.params?.pagination?.totalItems || 0;
-    const totalPages = Math.ceil(totalItems / itemsPerPage); // totalItems = ceil(totalItems /24);
-    //Handle page change
-    const paginate = (pageNumber) =>{
-      setCurrentPage(pageNumber);
+  useEffect(() => {
+    const fetchHotComics = async () => {
+      try {
+        const response = await axios.get('https://otruyenapi.com/v1/api/danh-sach/truyen-hot');
+        setHotComics(response.data.data.items.slice(0, 4)); // Lấy 4 truyện hot
+      } catch (error) {
+        console.error('Error fetching hot comics:', error);
+      }
     };
-    return (
-      <>
+    fetchHotComics();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  const totalItems = getdata?.data?.params?.pagination?.totalItems || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  return (
+    <>
       <Helmet>
-        <title>{getdata.data.seoOnPage.titleHead}</title>
+        <title>{getdata.data?.seoOnPage.titleHead}</title>
+        <meta name="description" content={getdata.data?.seoOnPage.descriptionHead} />
       </Helmet>
       <Container>
-        <Menu></Menu>
-
-          {/* Pagination Controls */}
-
+        <Menu />
+        <Row>
+          <Col>
+            <h3>Truyện Hot</h3>
+            <Row>
+              {hotComics.length > 0 ? (
+                hotComics.map((comic, index) => (
+                  <Col md={3} key={index}>
+                    <Card className="card-equal-height">
+                      <LazyLoadImage
+                        src={`https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`}
+                        alt={comic.name}
+                        effect="blur"
+                        style={{ width: '100%', height: 'auto' }}
+                      />
+                      <Card.Body>
+                        <Card.Title className="card-title-ellipsis" title={comic.name}>
+                          {comic.name}
+                        </Card.Title>
+                        <Button as={Link} to={`/comics/${comic.slug}`}>
+                          More Detail
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))
+              ) : (
+                <Col>
+                  <p>Không có truyện hot</p>
+                </Col>
+              )}
+            </Row>
+          </Col>
+        </Row>
         <Pagination className="pagination-container">
-          {/* Previous Button */}
           <Pagination.Prev
-            onClick={() =>  currentPage > 1 && paginate(currentPage -1)}
-            disabled= {currentPage === 1}
+            onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+            disabled={currentPage === 1}
           />
-
-          {[...Array(totalPages)].map((_, index) =>{
+          {[...Array(totalPages)].map((_, index) => {
             const pageNumber = index + 1;
-
             const rangeStart = Math.floor((currentPage - 1) / 5) * 5 + 1;
             const rangeEnd = Math.min(rangeStart + 4, totalPages);
-
-            if(pageNumber >= rangeStart && pageNumber <= rangeEnd){
-              return(
+            if (pageNumber >= rangeStart && pageNumber <= rangeEnd) {
+              return (
                 <Pagination.Item
                   key={pageNumber}
                   active={pageNumber === currentPage}
@@ -75,68 +117,74 @@ const Home = () => {
             }
             return null;
           })}
-
-          {/* Next Button */}
           <Pagination.Next
-            onClick={() =>  currentPage < totalPages && paginate(currentPage +1)}
-            disabled= {currentPage === totalPages}
+            onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
           />
         </Pagination>
-
         <Row>
           <Col>
             <Card>
               <Card.Body>
-                <Card.Title>{getdata.data.seoOnPage.titleHead}</Card.Title>
-                {getdata.data.seoOnPage.descriptionHead}
+                <Card.Title>{getdata.data?.seoOnPage.titleHead}</Card.Title>
+                <Card.Text>{getdata.data?.seoOnPage.descriptionHead}</Card.Text>
               </Card.Body>
-            </Card>             
+            </Card>
           </Col>
         </Row>
         <Row>
           {items && items.length > 0 ? (
             items.map((item, index) => (
-              <Col>
-                <Card>
-                  <Card.Img variant="top" src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`} />
+              <Col md={3} key={index}>
+                <Card className="card-equal-height">
+                  <LazyLoadImage
+                    src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
+                    alt={item.name}
+                    effect="blur"
+                    style={{ width: '100%', height: 'auto' }}
+                  />
                   <Card.Body>
-                    <Card.Title>{item.name || "No Title"}</Card.Title>
+                    <Card.Title className="card-title-ellipsis" title={item.name}>
+                      {item.name}
+                    </Card.Title>
                     <Card.Text>{item.updatedAt}</Card.Text>
                     <Card.Text>
-                      {item.category && item.category.length > 0 
+                      {item.category && item.category.length > 0
                         ? item.category.map((category, i) => (
-                            <Badge bg="info" key={i}>{category.name}</Badge>
+                            <Badge bg="info" key={i}>
+                              {category.name}
+                            </Badge>
                           ))
-                        : "Others"}
+                        : 'Others'}
                     </Card.Text>
-                    <Button variant="primary btn-sm" as={Link} to={`/comics/${item.slug}`}>More Detail</Button>
+                    <Button
+                      variant="primary btn-sm"
+                      as={Link}
+                      to={`/comics/${item.slug}`}
+                    >
+                      More Detail
+                    </Button>
                   </Card.Body>
                 </Card>
               </Col>
-            ))  
-            ) : (
+            ))
+          ) : (
             <Col>
-              <Card.Body>No Content Avaiable</Card.Body>
+              <Card.Body>No Content Available</Card.Body>
             </Col>
-          )}  
+          )}
         </Row>
-        {/* Pagination Controls */}
-
         <Pagination className="pagination-container">
-          {/* Previous Button */}
           <Pagination.Prev
-            onClick={() =>  currentPage > 1 && paginate(currentPage -1)}
-            disabled= {currentPage === 1}
+            onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+            disabled={currentPage === 1}
           />
-
-          {[...Array(totalPages)].map((_, index) =>{
+          {[...Array(totalPages)].map((_, index) => {
             const pageNumber = index + 1;
-
             const rangeStart = Math.floor((currentPage - 1) / 5) * 5 + 1;
             const rangeEnd = Math.min(rangeStart + 4, totalPages);
-
-            if(pageNumber >= rangeStart && pageNumber <= rangeEnd){
-              return(
+            if (pageNumber >= rangeStart && pageNumber <= rangeEnd) {
+              return (
                 <Pagination.Item
                   key={pageNumber}
                   active={pageNumber === currentPage}
@@ -148,16 +196,14 @@ const Home = () => {
             }
             return null;
           })}
-
-          {/* Next Button */}
           <Pagination.Next
-            onClick={() =>  currentPage < totalPages && paginate(currentPage +1)}
-            disabled= {currentPage === totalPages}
+            onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
           />
         </Pagination>
       </Container>
-        </>
-    );
+    </>
+  );
 };
 
 export default Home;
