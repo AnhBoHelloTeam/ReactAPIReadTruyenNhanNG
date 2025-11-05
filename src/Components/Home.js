@@ -11,6 +11,10 @@ import Menu from './Include/Menu';
 const Home = () => {
   const [getdata, setData] = useState([]);
   const [hotComics, setHotComics] = useState([]);
+  const [ongoing, setOngoing] = useState([]);
+  const [completed, setCompleted] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
+  const [trending, setTrending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,6 +47,27 @@ const Home = () => {
       }
     };
     fetchHotComics();
+  }, []);
+
+  // Fetch additional home blocks once
+  useEffect(() => {
+    const fetchBlocks = async () => {
+      try {
+        const [ongoingRes, completedRes, upcomingRes, trendingRes] = await Promise.all([
+          apiClient.get('/danh-sach/dang-phat-hanh?page=1'),
+          apiClient.get('/danh-sach/hoan-thanh?page=1'),
+          apiClient.get('/danh-sach/sap-ra-mat?page=1'),
+          apiClient.get('/danh-sach/trending?page=1'),
+        ]);
+        setOngoing((ongoingRes.data?.data?.items || []).slice(0, 8));
+        setCompleted((completedRes.data?.data?.items || []).slice(0, 8));
+        setUpcoming((upcomingRes.data?.data?.items || []).slice(0, 8));
+        setTrending((trendingRes.data?.data?.items || []).slice(0, 8));
+      } catch (e) {
+        console.error('Error fetching home blocks', e);
+      }
+    };
+    fetchBlocks();
   }, []);
 
   if (loading) return <p>Loading...</p>;
@@ -92,6 +117,146 @@ const Home = () => {
               ) : (
                 <Col>
                   <p>Không có truyện hot</p>
+                </Col>
+              )}
+            </Row>
+          </Col>
+        </Row>
+        {/* Ongoing */}
+        <Row>
+          <Col>
+            <h3>Đang phát hành</h3>
+            <Row>
+              {ongoing.length > 0 ? (
+                ongoing.map((item, index) => (
+                  <Col md={3} key={`ongoing-${index}`}>
+                    <Card className="card-equal-height">
+                      <LazyLoadImage
+                        src={getThumbUrl(item.thumb_url)}
+                        alt={item.name}
+                        effect="blur"
+                        onError={onImageErrorHide}
+                        style={{ width: '100%', height: 'auto' }}
+                      />
+                      <Card.Body>
+                        <Card.Title className="card-title-ellipsis" title={item.name}>
+                          {item.name}
+                        </Card.Title>
+                        <Button as={Link} to={`/comics/${item.slug}`}>
+                          More Detail
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))
+              ) : (
+                <Col>
+                  <p>Không có dữ liệu</p>
+                </Col>
+              )}
+            </Row>
+          </Col>
+        </Row>
+        {/* Completed */}
+        <Row>
+          <Col>
+            <h3>Hoàn thành</h3>
+            <Row>
+              {completed.length > 0 ? (
+                completed.map((item, index) => (
+                  <Col md={3} key={`completed-${index}`}>
+                    <Card className="card-equal-height">
+                      <LazyLoadImage
+                        src={getThumbUrl(item.thumb_url)}
+                        alt={item.name}
+                        effect="blur"
+                        onError={onImageErrorHide}
+                        style={{ width: '100%', height: 'auto' }}
+                      />
+                      <Card.Body>
+                        <Card.Title className="card-title-ellipsis" title={item.name}>
+                          {item.name}
+                        </Card.Title>
+                        <Button as={Link} to={`/comics/${item.slug}`}>
+                          More Detail
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))
+              ) : (
+                <Col>
+                  <p>Không có dữ liệu</p>
+                </Col>
+              )}
+            </Row>
+          </Col>
+        </Row>
+        {/* Upcoming */}
+        <Row>
+          <Col>
+            <h3>Sắp ra mắt</h3>
+            <Row>
+              {upcoming.length > 0 ? (
+                upcoming.map((item, index) => (
+                  <Col md={3} key={`upcoming-${index}`}>
+                    <Card className="card-equal-height">
+                      <LazyLoadImage
+                        src={getThumbUrl(item.thumb_url)}
+                        alt={item.name}
+                        effect="blur"
+                        onError={onImageErrorHide}
+                        style={{ width: '100%', height: 'auto' }}
+                      />
+                      <Card.Body>
+                        <Card.Title className="card-title-ellipsis" title={item.name}>
+                          {item.name}
+                        </Card.Title>
+                        <Button as={Link} to={`/comics/${item.slug}`}>
+                          More Detail
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))
+              ) : (
+                <Col>
+                  <p>Không có dữ liệu</p>
+                </Col>
+              )}
+            </Row>
+          </Col>
+        </Row>
+        {/* Trending */}
+        <Row>
+          <Col>
+            <h3>Top Trending</h3>
+            <Row>
+              {trending.length > 0 ? (
+                trending.map((item, index) => (
+                  <Col md={3} key={`trending-${index}`}>
+                    <Card className="card-equal-height">
+                      <LazyLoadImage
+                        src={getThumbUrl(item.thumb_url)}
+                        alt={item.name}
+                        effect="blur"
+                        onError={onImageErrorHide}
+                        style={{ width: '100%', height: 'auto' }}
+                      />
+                      <Card.Body>
+                        <Card.Title className="card-title-ellipsis" title={item.name}>
+                          {item.name}
+                        </Card.Title>
+                        <Button as={Link} to={`/comics/${item.slug}`}>
+                          More Detail
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))
+              ) : (
+                <Col>
+                  <p>Không có dữ liệu</p>
                 </Col>
               )}
             </Row>
