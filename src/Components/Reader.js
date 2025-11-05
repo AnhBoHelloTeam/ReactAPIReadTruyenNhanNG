@@ -12,13 +12,12 @@ const Reader = () => {
   const navigate = useNavigate();
   const api = searchParams.get('api') || '';
   const slug = searchParams.get('slug') || '';
+  const prevApi = searchParams.get('prev') || '';
+  const nextApi = searchParams.get('next') || '';
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [prefetchNext, setPrefetchNext] = useState(null);
-  const [chapters, setChapters] = useState([]); // list from comic detail
-  const [computedPrev, setComputedPrev] = useState('');
-  const [computedNext, setComputedNext] = useState('');
 
   const fetchChapter = useCallback(async () => {
     if (!api) return;
@@ -38,30 +37,7 @@ const Reader = () => {
     fetchChapter();
   }, [fetchChapter]);
 
-  // Fetch comic chapters by slug (for list + stable prev/next)
-  useEffect(() => {
-    let ignore = false;
-    const run = async () => {
-      if (!slug) return;
-      try {
-        const res = await axios.get(`https://otruyenapi.com/v1/api/truyen-tranh/${slug}`);
-        const raw = res?.data?.data?.item?.chapters?.[0]?.server_data || [];
-        if (!ignore) setChapters(raw);
-      } catch (_) {}
-    };
-    run();
-    return () => { ignore = true; };
-  }, [slug]);
-
-  // Recompute prev/next based on chapters and current api
-  useEffect(() => {
-    if (!chapters.length || !api) return;
-    const idx = chapters.findIndex((c) => c.chapter_api_data === api);
-    const prev = idx > 0 ? chapters[idx - 1]?.chapter_api_data : '';
-    const next = idx >= 0 && idx < chapters.length - 1 ? chapters[idx + 1]?.chapter_api_data : '';
-    setComputedPrev(prev);
-    setComputedNext(next);
-  }, [chapters, api]);
+  // keep navigation simple: use prev/next from URL if present
 
   // Restore scroll position for this chapter
   useEffect(() => {
@@ -77,37 +53,37 @@ const Reader = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, [api]);
 
-  // Keyboard navigation: Left = prev, Right = next
+  // Keyboard navigation: Left = prev, Right = next (simple)
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === 'ArrowLeft' && computedPrev) {
+      if (e.key === 'ArrowLeft' && prevApi) {
         e.preventDefault();
         setSearchParams((p) => {
           const n = new URLSearchParams(p);
-          n.set('api', computedPrev);
+          n.set('api', prevApi);
           // prev/next become relative to the new api; keep existing if provided in URL
           return n;
         });
-      } else if (e.key === 'ArrowRight' && computedNext) {
+      } else if (e.key === 'ArrowRight' && nextApi) {
         e.preventDefault();
         setSearchParams((p) => {
           const n = new URLSearchParams(p);
-          n.set('api', computedNext);
+          n.set('api', nextApi);
           return n;
         });
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [computedPrev, computedNext, setSearchParams]);
+  }, [prevApi, nextApi, setSearchParams]);
 
   // Simple prefetch for next chapter images
   useEffect(() => {
     let aborted = false;
     const run = async () => {
-      if (!computedNext) return;
+      if (!nextApi) return;
       try {
-        const res = await axios.get(computedNext);
+        const res = await axios.get(nextApi);
         if (aborted) return;
         setPrefetchNext(res.data);
         const nItem = res.data?.data?.item;
@@ -120,7 +96,7 @@ const Reader = () => {
     };
     run();
     return () => { aborted = true; };
-  }, [computedNext]);
+  }, [nextApi]);
 
   if (!api) return <p>Thiếu tham số chapter api.</p>;
   if (loading) return <p>Loading...</p>;
@@ -130,19 +106,19 @@ const Reader = () => {
   const cdn = data?.data?.domain_cdn;
 
   const handleGoPrev = () => {
-    if (!computedPrev) return;
+    if (!prevApi) return;
     setSearchParams((p) => {
       const n = new URLSearchParams(p);
-      n.set('api', computedPrev);
+      n.set('api', prevApi);
       return n;
     });
   };
 
   const handleGoNext = () => {
-    if (!computedNext) return;
+    if (!nextApi) return;
     setSearchParams((p) => {
       const n = new URLSearchParams(p);
-      n.set('api', computedNext);
+      n.set('api', nextApi);
       return n;
     });
   };
@@ -170,56 +146,27 @@ const Reader = () => {
         <Menu />
         <div style={{ margin: '10px 0', display: 'flex', gap: 8 }}>
           <Button as={Link} to={-1}>Quay lại</Button>
-          <Button variant="secondary" disabled={!computedPrev} onClick={handleGoPrev}>← Chương trước</Button>
-          <Button variant="secondary" disabled={!computedNext} onClick={handleGoNext}>Chương sau →</Button>
+          <Button variant="secondary" disabled={!prevApi} onClick={handleGoPrev}>← Chương trước</Button>
+          <Button variant="secondary" disabled={!nextApi} onClick={handleGoNext}>Chương sau →</Button>
         </div>
         <h5 style={{ marginBottom: 10 }}>
           {chapter?.comic_name} - {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
         </h5>
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-md-3" style={{ marginBottom: 12 }}>
-              {chapters.length > 0 && (
-                <div className="chapters-list" style={{ maxHeight: 560, position: 'sticky', top: 70 }}>
-                  {chapters.map((c, i) => (
-                    <a
-                      key={i}
-                      href={`#`}
-                      className="chapter-row"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setSearchParams((p) => {
-                          const n = new URLSearchParams(p);
-                          n.set('api', c.chapter_api_data);
-                          return n;
-                        });
-                      }}
-                    >
-                      <span className="chapter-name">{c.chapter_name?.toString().startsWith('Ch') ? c.chapter_name : `Chương ${c.chapter_name}`}</span>
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="col-md-9">
-              <div className="chapter-container">
-                {chapter?.chapter_image?.length ? (
-                  chapter.chapter_image.map((img, idx) => (
-                    <LazyLoadImage
-                      key={idx}
-                      src={`${cdn}/${chapter.chapter_path}/${img.image_file}`}
-                      alt={`Page ${idx + 1}`}
-                      effect="blur"
-                      onError={onImgErrorRetry}
-                      style={{ width: '100%', height: 'auto', marginBottom: '10px' }}
-                    />
-                  ))
-                ) : (
-                  <p>No images.</p>
-                )}
-              </div>
-            </div>
-          </div>
+        <div className="chapter-container">
+          {chapter?.chapter_image?.length ? (
+            chapter.chapter_image.map((img, idx) => (
+              <LazyLoadImage
+                key={idx}
+                src={`${cdn}/${chapter.chapter_path}/${img.image_file}`}
+                alt={`Page ${idx + 1}`}
+                effect="blur"
+                onError={onImgErrorRetry}
+                style={{ width: '100%', height: 'auto', marginBottom: '10px' }}
+              />
+            ))
+          ) : (
+            <p>No images.</p>
+          )}
         </div>
       </Container>
     </>
