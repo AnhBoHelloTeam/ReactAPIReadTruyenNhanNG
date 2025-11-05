@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
+import ComicCard from './UI/ComicCard';
+import SectionTitle from './UI/SectionTitle';
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -90,29 +92,12 @@ const Home = () => {
         <Menu />
         <Row>
           <Col>
-            <h3>Truyện Hot</h3>
+            <SectionTitle>Truyện Hot</SectionTitle>
             <Row>
               {hotComics.length > 0 ? (
                 hotComics.map((comic, index) => (
                   <Col md={3} key={index}>
-                    <Card className="card-equal-height">
-                      <LazyLoadImage
-                        className="card-img-top"
-                        src={getThumbUrl(comic.thumb_url)}
-                        alt={comic.name}
-                        effect="blur"
-                        onError={onImageErrorHide}
-                        style={{ width: '100%', height: 'auto' }}
-                      />
-                      <Card.Body>
-                        <Card.Title className="card-title-ellipsis" title={comic.name}>
-                          {comic.name}
-                        </Card.Title>
-                        <Button as={Link} to={`/comics/${comic.slug}`}>
-                          More Detail
-                        </Button>
-                      </Card.Body>
-                    </Card>
+                    <ComicCard item={comic} />
                   </Col>
                 ))
               ) : (
@@ -126,29 +111,12 @@ const Home = () => {
         {/* Ongoing */}
         <Row>
           <Col>
-            <h3>Đang phát hành</h3>
+            <SectionTitle>Đang phát hành</SectionTitle>
             <Row>
               {ongoing.length > 0 ? (
                 ongoing.map((item, index) => (
                   <Col md={3} key={`ongoing-${index}`}>
-                    <Card className="card-equal-height">
-                      <LazyLoadImage
-                        className="card-img-top"
-                        src={getThumbUrl(item.thumb_url)}
-                        alt={item.name}
-                        effect="blur"
-                        onError={onImageErrorHide}
-                        style={{ width: '100%', height: 'auto' }}
-                      />
-                      <Card.Body>
-                        <Card.Title className="card-title-ellipsis" title={item.name}>
-                          {item.name}
-                        </Card.Title>
-                        <Button as={Link} to={`/comics/${item.slug}`}>
-                          More Detail
-                        </Button>
-                      </Card.Body>
-                    </Card>
+                    <ComicCard item={item} />
                   </Col>
                 ))
               ) : (
@@ -162,29 +130,12 @@ const Home = () => {
         {/* Completed */}
         <Row>
           <Col>
-            <h3>Hoàn thành</h3>
+            <SectionTitle>Hoàn thành</SectionTitle>
             <Row>
               {completed.length > 0 ? (
                 completed.map((item, index) => (
                   <Col md={3} key={`completed-${index}`}>
-                    <Card className="card-equal-height">
-                      <LazyLoadImage
-                        className="card-img-top"
-                        src={getThumbUrl(item.thumb_url)}
-                        alt={item.name}
-                        effect="blur"
-                        onError={onImageErrorHide}
-                        style={{ width: '100%', height: 'auto' }}
-                      />
-                      <Card.Body>
-                        <Card.Title className="card-title-ellipsis" title={item.name}>
-                          {item.name}
-                        </Card.Title>
-                        <Button as={Link} to={`/comics/${item.slug}`}>
-                          More Detail
-                        </Button>
-                      </Card.Body>
-                    </Card>
+                    <ComicCard item={item} />
                   </Col>
                 ))
               ) : (
@@ -198,29 +149,12 @@ const Home = () => {
         {/* Upcoming */}
         <Row>
           <Col>
-            <h3>Sắp ra mắt</h3>
+            <SectionTitle>Sắp ra mắt</SectionTitle>
             <Row>
               {upcoming.length > 0 ? (
                 upcoming.map((item, index) => (
                   <Col md={3} key={`upcoming-${index}`}>
-                    <Card className="card-equal-height">
-                      <LazyLoadImage
-                        className="card-img-top"
-                        src={getThumbUrl(item.thumb_url)}
-                        alt={item.name}
-                        effect="blur"
-                        onError={onImageErrorHide}
-                        style={{ width: '100%', height: 'auto' }}
-                      />
-                      <Card.Body>
-                        <Card.Title className="card-title-ellipsis" title={item.name}>
-                          {item.name}
-                        </Card.Title>
-                        <Button as={Link} to={`/comics/${item.slug}`}>
-                          More Detail
-                        </Button>
-                      </Card.Body>
-                    </Card>
+                    <ComicCard item={item} />
                   </Col>
                 ))
               ) : (
@@ -234,28 +168,12 @@ const Home = () => {
         {/* Trending */}
         <Row>
           <Col>
-            <h3>Top Trending</h3>
+            <SectionTitle>Top Trending</SectionTitle>
             <Row>
               {trending.length > 0 ? (
                 trending.map((item, index) => (
                   <Col md={3} key={`trending-${index}`}>
-                    <Card className="card-equal-height">
-                      <LazyLoadImage
-                        src={getThumbUrl(item.thumb_url)}
-                        alt={item.name}
-                        effect="blur"
-                        onError={onImageErrorHide}
-                        style={{ width: '100%', height: 'auto' }}
-                      />
-                      <Card.Body>
-                        <Card.Title className="card-title-ellipsis" title={item.name}>
-                          {item.name}
-                        </Card.Title>
-                        <Button as={Link} to={`/comics/${item.slug}`}>
-                          More Detail
-                        </Button>
-                      </Card.Body>
-                    </Card>
+                    <ComicCard item={item} />
                   </Col>
                 ))
               ) : (
@@ -307,38 +225,7 @@ const Home = () => {
           {items && items.length > 0 ? (
             items.map((item, index) => (
               <Col md={3} key={index}>
-                <Card className="card-equal-height">
-                  <LazyLoadImage
-                    className="card-img-top"
-                    src={getThumbUrl(item.thumb_url)}
-                    alt={item.name}
-                    effect="blur"
-                    onError={onImageErrorHide}
-                    style={{ width: '100%', height: 'auto' }}
-                  />
-                  <Card.Body>
-                    <Card.Title className="card-title-ellipsis" title={item.name}>
-                      {item.name}
-                    </Card.Title>
-                    <Card.Text>{item.updatedAt}</Card.Text>
-                    <Card.Text>
-                      {item.category && item.category.length > 0
-                        ? item.category.map((category, i) => (
-                            <Badge bg="info" key={i}>
-                              {category.name}
-                            </Badge>
-                          ))
-                        : 'Others'}
-                    </Card.Text>
-                    <Button
-                      variant="primary btn-sm"
-                      as={Link}
-                      to={`/comics/${item.slug}`}
-                    >
-                      More Detail
-                    </Button>
-                  </Card.Body>
-                </Card>
+                <ComicCard item={item} />
               </Col>
             ))
           ) : (

@@ -7,6 +7,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
+import ComicCard from './UI/ComicCard';
 
 const Search = () => {
   const [searchParams] = useSearchParams();
@@ -161,40 +162,7 @@ const Search = () => {
                     `Trạng thái: ${getStatus(item)}`,
                   ].join('\n');
                   return (
-                    <Col md={3} key={index}>
-                      <Card className="card-equal-height">
-                        <LazyLoadImage
-                          className="card-img-top"
-                          src={getThumbUrl(item.thumb_url)}
-                          alt={item.name}
-                          effect="blur"
-                          onError={onImageErrorHide}
-                          style={{ width: '100%', height: 'auto' }}
-                        />
-                        <Card.Body>
-                          <Card.Title className="card-title-ellipsis" title={tooltipText}>
-                            {item.name}
-                          </Card.Title>
-                          <Card.Text>
-                            {item.category && item.category.length > 0 ? (
-                              <span className="category-ellipsis" title={item.category.map(cat => cat.name).join(', ')}>
-                                {item.category.slice(0, 2).map((cat, i) => (
-                                  <Badge bg="info" key={i}>{cat.name}</Badge>
-                                ))}
-                                {item.category.length > 2 && '...'}
-                              </span>
-                            ) : 'Others'}
-                          </Card.Text>
-                          <Button
-                            variant="primary btn-sm"
-                            as={Link}
-                            to={`/comics/${item.slug}`}
-                          >
-                            More Detail
-                          </Button>
-                        </Card.Body>
-                      </Card>
-                    </Col>
+                    <Col md={3} key={index}><ComicCard item={item} /></Col>
                   );
                 })
               ) : (

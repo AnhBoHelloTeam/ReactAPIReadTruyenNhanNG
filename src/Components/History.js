@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import ComicCard from './UI/ComicCard';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 
@@ -33,36 +34,7 @@ const History = () => {
                   `Trạng thái: ${getStatus(comic)}`,
                 ].join('\n');
                 return (
-                  <Col md={3} key={index}>
-                    <Card className="card-equal-height">
-                      <LazyLoadImage
-                        className="card-img-top"
-                        src={`https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`}
-                        alt={comic.name}
-                        effect="blur"
-                        style={{ width: '100%', height: 'auto' }}
-                      />
-                      <Card.Body>
-                        <Card.Title className="card-title-ellipsis" title={tooltipText}>
-                          {comic.name}
-                        </Card.Title>
-                        <Card.Text>
-                          {comic.category && comic.category.length > 0 ? (
-                            <span className="category-ellipsis" title={comic.category.map(cat => cat.name).join(', ')}>
-                              {comic.category.slice(0, 2).map((cat, i) => (
-                                <Badge bg="info" key={i}>{cat.name}</Badge>
-                              ))}
-                              {comic.category.length > 2 && '...'}
-                            </span>
-                          ) : 'Others'}
-                        </Card.Text>
-                        <Card.Text>Đọc tiếp: Chapter {comic.lastChapter}</Card.Text>
-                        <Button as={Link} to={`/comics/${comic.slug}`}>
-                          Đọc tiếp
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
+                  <Col md={3} key={index}><ComicCard item={comic} /></Col>
                 );
               })
             ) : (
