@@ -65,8 +65,11 @@ code {
 
 .card-equal-height .card-img-top {
   width: 100%;
-  height: 250px;
+  aspect-ratio: 3 / 4;
+  height: auto;
   object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .card-equal-height .card-body {
@@ -81,6 +84,11 @@ code {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.35);
   border-color: rgba(158,203,255,0.25);
+}
+
+.card-equal-height {
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 /* Style cho tên truyện với ellipsis */
@@ -162,7 +170,7 @@ h3, .h3 {
   }
 
   .card-equal-height .card-img-top {
-    height: 180px;
+    aspect-ratio: 3 / 4;
   }
 
   .card-title-ellipsis {
@@ -203,7 +211,7 @@ h3, .h3 {
   }
 
   .card-equal-height .card-img-top {
-    height: 150px;
+    aspect-ratio: 3 / 4;
   }
 
   .card-title-ellipsis {
