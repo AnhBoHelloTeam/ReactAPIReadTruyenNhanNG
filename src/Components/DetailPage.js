@@ -7,6 +7,7 @@ import { Link, useParams } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
+import { addFavorite, removeFavorite, isFavorite } from '../utils/favorites';
 
 const DetailPage = () => {
   const { slug } = useParams();
@@ -16,6 +17,7 @@ const DetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fav, setFav] = useState(false);
   const item = getdata?.data?.data?.item;
 
   useEffect(() => {
@@ -27,6 +29,7 @@ const DetailPage = () => {
       // Lưu lịch sử đọc
       if (response.data.data.item) {
         const comic = response.data.data.item;
+        setFav(isFavorite(comic.slug));
         const history = JSON.parse(localStorage.getItem('readingHistory')) || [];
         const updatedHistory = [
           {
@@ -46,6 +49,24 @@ const DetailPage = () => {
   };
   fetchData();
 }, [slug]);
+  const handleToggleFavorite = () => {
+    if (!item) return;
+    const comic = {
+      slug: item.slug,
+      name: item.name,
+      thumb_url: item.thumb_url,
+      category: item.category || [],
+      status: item.status,
+      updatedAt: item.updatedAt,
+    };
+    if (isFavorite(item.slug)) {
+      removeFavorite(item.slug);
+      setFav(false);
+    } else {
+      addFavorite(comic);
+      setFav(true);
+    }
+  };
 
   // Lấy truyện liên quan
   useEffect(() => {
@@ -139,6 +160,11 @@ const DetailPage = () => {
                 <Card.Title dangerouslySetInnerHTML={{ __html: item?.content }} />
                 <Card.Text>{item?.updatedAt}</Card.Text>
                 <Card.Text>{item?.status}</Card.Text>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                  <Button variant={fav ? 'danger' : 'outline-danger'} onClick={handleToggleFavorite}>
+                    {fav ? 'Bỏ yêu thích' : 'Yêu thích'}
+                  </Button>
+                </div>
                 <Card.Text>
                   {item?.category && item.category.length > 0
                     ? item.category.map((category, index) => (
