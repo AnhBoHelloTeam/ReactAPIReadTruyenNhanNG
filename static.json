@@ -1,14 +1,14 @@
 {
   "routes": [
-    { "path": "/read/*", "destination": "/index.html" },
-    { "path": "/comics/*", "destination": "/index.html" },
-    { "path": "/genre/*", "destination": "/index.html" },
-    { "path": "/trending/*", "destination": "/index.html" },
-    { "path": "/author/*", "destination": "/index.html" },
-    { "path": "/favorites", "destination": "/index.html" },
-    { "path": "/history", "destination": "/index.html" },
-    { "path": "/search", "destination": "/index.html" },
-    { "path": "/", "destination": "/index.html" }
+    { "src": "/read/.+", "dest": "/index.html" },
+    { "src": "/comics/.+", "dest": "/index.html" },
+    { "src": "/genre/.+", "dest": "/index.html" },
+    { "src": "/trending/.+", "dest": "/index.html" },
+    { "src": "/author/.+", "dest": "/index.html" },
+    { "src": "/favorites", "dest": "/index.html" },
+    { "src": "/history", "dest": "/index.html" },
+    { "src": "/search", "dest": "/index.html" },
+    { "src": "/.*", "dest": "/index.html" }
   ]
 }
 
