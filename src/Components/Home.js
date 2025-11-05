@@ -13,7 +13,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const items = getdata?.data?.items;
+  const items = getdata?.data?.data?.items;
   const itemsPerPage = 24;
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Home = () => {
         const response = await axios.get(
           `https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=${currentPage}`
         );
-        setData(response.data);
+        setData(response);
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -57,8 +57,8 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>{getdata.data?.seoOnPage.titleHead}</title>
-        <meta name="description" content={getdata.data?.seoOnPage.descriptionHead} />
+        <title>{getdata.data?.data?.seoOnPage.titleHead}</title>
+        <meta name="description" content={getdata.data?.data?.seoOnPage.descriptionHead} />
       </Helmet>
       <Container>
         <Menu />
@@ -126,8 +126,8 @@ const Home = () => {
           <Col>
             <Card>
               <Card.Body>
-                <Card.Title>{getdata.data?.seoOnPage.titleHead}</Card.Title>
-                <Card.Text>{getdata.data?.seoOnPage.descriptionHead}</Card.Text>
+                <Card.Title>{getdata.data?.data?.seoOnPage.titleHead}</Card.Title>
+                <Card.Text>{getdata.data?.data?.seoOnPage.descriptionHead}</Card.Text>
               </Card.Body>
             </Card>
           </Col>
