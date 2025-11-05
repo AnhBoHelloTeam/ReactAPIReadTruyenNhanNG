@@ -94,6 +94,27 @@ code {
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+/* Reader toolbar */
+.reader-toolbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13,17,23,0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  z-index: 1100;
+}
+.reader-toolbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 10px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
 .chapter-container {
   max-width: 800px;
   margin: 0 auto;

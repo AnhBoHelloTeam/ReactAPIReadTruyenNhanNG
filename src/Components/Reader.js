@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link, useNavigate, useParams } from 'react-router-dom';
-import { Container, Button } from 'react-bootstrap';
+import { Container, Button, Form } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
@@ -206,7 +206,42 @@ const Reader = () => {
             <p>No images.</p>
           )}
         </div>
+        {/* Spacer to prevent overlap with toolbar */}
+        <div style={{ height: 70 }} />
       </Container>
+
+      {/* Sticky footer toolbar */}
+      <div className="reader-toolbar">
+        <div className="reader-toolbar-inner">
+          <Button as={Link} to="/" variant="dark" size="sm">Trang chủ</Button>
+          <Button variant="secondary" size="sm" disabled={!computedPrev} onClick={handleGoPrev}>← Trước</Button>
+          <Form.Select
+            size="sm"
+            value={api}
+            onChange={(e) => {
+              const targetApi = e.target.value;
+              const id = (targetApi || '').split('/').pop();
+              if (slug && id) navigate(`/read/${slug}/${id}`);
+              else {
+                setSearchParams((p) => {
+                  const n = new URLSearchParams(p);
+                  n.set('api', targetApi);
+                  return n;
+                });
+              }
+            }}
+            style={{ maxWidth: 240 }}
+          >
+            {chapters.map((c, i) => (
+              <option key={i} value={c.chapter_api_data}>
+                {c.chapter_name?.toString().startsWith('Ch') ? c.chapter_name : `Chương ${c.chapter_name}`}
+              </option>
+            ))}
+          </Form.Select>
+          <Button variant="secondary" size="sm" disabled={!computedNext} onClick={handleGoNext}>Sau →</Button>
+          <Button variant="dark" size="sm" disabled>Theo dõi</Button>
+        </div>
+      </div>
     </>
   );
 };
