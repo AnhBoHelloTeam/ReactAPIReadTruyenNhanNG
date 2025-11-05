@@ -93,7 +93,7 @@ const Menu = () => {
   return (
     <div>
       <Navbar expand="lg" className="bg-body-tertiary" sticky="top" data-bs-theme="dark">
-        <Container>
+        <Container fluid>
           <Navbar.Brand as={Link} to="/" style={{ fontSize: '1.5rem', fontWeight: 800 }}>
             Otruyen NhanNG
           </Navbar.Brand>
