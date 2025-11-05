@@ -51,6 +51,31 @@ code {
   color: #d0e7ff !important;
 }
 
+/* One-column scroll list like reference site */
+.chapters-list {
+  max-height: 540px;
+  overflow: auto;
+  background: #0f1115;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+}
+
+.chapter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: #e4e6eb !important;
+  text-decoration: none;
+}
+.chapter-row:hover {
+  background: #161a23;
+}
+.chapter-name {
+  color: #9ecbff;
+}
+
 .dropdown-menu.show {
   height: 500px;
   overflow: auto;
