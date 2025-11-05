@@ -7,6 +7,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { getThumbUrl, onImageErrorHide } from '../utils/image';
 import ComicCard from './UI/ComicCard';
+import SectionTitle from './UI/SectionTitle';
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
@@ -25,11 +26,18 @@ const Favorites = () => {
   };
 
   return (
-    <Container>
-      <Menu />
-      <Row>
-        <Col>
-          <h3>Yêu thích</h3>
+      <Container>
+        <Menu />
+        <Row style={{ marginBottom: 24 }}>
+          <Col>
+            <div className="hero-section">
+              <SectionTitle style={{ marginTop: 0 }}>Yêu thích</SectionTitle>
+              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>Danh sách truyện bạn đã đánh dấu yêu thích</p>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
           <Row>
             {favorites.length > 0 ? (
               favorites.map((comic, index) => {
@@ -44,7 +52,10 @@ const Favorites = () => {
               })
             ) : (
               <Col>
-                <p>Chưa có mục yêu thích</p>
+                <div className="empty-state">
+                  <div className="empty-state-icon">❤️</div>
+                  <p>Chưa có mục yêu thích</p>
+                </div>
               </Col>
             )}
           </Row>

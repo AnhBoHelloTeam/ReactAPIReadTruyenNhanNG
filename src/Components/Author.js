@@ -7,6 +7,8 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 import { apiClient } from '../api/client';
 import { getThumbUrl, onImageErrorHide } from '../utils/image';
+import ComicCard from './UI/ComicCard';
+import SectionTitle from './UI/SectionTitle';
 
 const Author = () => {
   const { slug } = useParams();
@@ -61,59 +63,27 @@ const Author = () => {
       </Helmet>
       <Container>
         <Menu />
-        <Row>
+        <Row style={{ marginBottom: 24 }}>
           <Col>
-            <Card>
-              <Card.Body>
-                <Card.Title>{title}</Card.Title>
-                <Card.Text>{desc}</Card.Text>
-              </Card.Body>
-            </Card>
+            <div className="hero-section">
+              <SectionTitle style={{ marginTop: 0 }}>{title}</SectionTitle>
+              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>{desc}</p>
+            </div>
           </Col>
         </Row>
         <Row>
           {items && items.length > 0 ? (
-            items.map((item, index) => {
-              const tooltipText = [
-                `Tên: ${item.name}`,
-                `Thể loại: ${item.category ? item.category.map(cat => cat.name).join(', ') : 'Không có'}`,
-                `Trạng thái: ${getStatus(item)}`,
-              ].join('\n');
-              return (
-                <Col md={3} key={index}>
-                  <Card className="card-equal-height">
-                    <LazyLoadImage
-                      src={getThumbUrl(item.thumb_url)}
-                      alt={item.name}
-                      effect="blur"
-                      onError={onImageErrorHide}
-                      style={{ width: '100%', height: 'auto' }}
-                    />
-                    <Card.Body>
-                      <Card.Title className="card-title-ellipsis" title={tooltipText}>
-                        {item.name}
-                      </Card.Title>
-                      <Card.Text>
-                        {item.category && item.category.length > 0 ? (
-                          <span className="category-ellipsis" title={item.category.map(cat => cat.name).join(', ')}>
-                            {item.category.slice(0, 2).map((cat, i) => (
-                              <Badge bg="info" key={i}>{cat.name}</Badge>
-                            ))}
-                            {item.category.length > 2 && '...'}
-                          </span>
-                        ) : 'Others'}
-                      </Card.Text>
-                      <Button variant="primary btn-sm" as={Link} to={`/comics/${item.slug}`}>
-                        More Detail
-                      </Button>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              );
-            })
+            items.map((item, index) => (
+              <Col md={3} key={index}>
+                <ComicCard item={item} />
+              </Col>
+            ))
           ) : (
             <Col>
-              <Card.Body>No Content Available</Card.Body>
+              <div className="empty-state">
+                <div className="empty-state-icon">✍️</div>
+                <p>Không có truyện nào</p>
+              </div>
             </Col>
           )}
         </Row>

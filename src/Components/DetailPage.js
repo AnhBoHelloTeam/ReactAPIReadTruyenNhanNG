@@ -8,6 +8,8 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 import { addFavorite, removeFavorite, isFavorite } from '../utils/favorites';
+import ComicCard from './UI/ComicCard';
+import SectionTitle from './UI/SectionTitle';
 
 const DetailPage = () => {
   const { slug } = useParams();
@@ -135,21 +137,29 @@ const DetailPage = () => {
       </Helmet>
       <Container>
         <Menu />
-        <Button as={Link} to="/">Back to Home</Button>
-        <Row>
+        <div style={{ marginBottom: 20 }}>
+          <Button as={Link} to="/" variant="outline-light" size="sm">← Về trang chủ</Button>
+        </div>
+        {/* Hero Info */}
+        <Row style={{ marginBottom: 24 }}>
           <Col>
-            <Card>
-              <Card.Body>
-                <Card.Title>{getdata.data.data.seoOnPage.titleHead}</Card.Title>
-                <Card.Text>{getdata.data.data.seoOnPage.descriptionHead}</Card.Text>
-              </Card.Body>
-            </Card>
+            <div className="hero-section" style={{ padding: '24px', marginBottom: 0 }}>
+              <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 12, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                {item?.name || 'No Title'}
+              </h1>
+              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 16 }} dangerouslySetInnerHTML={{ __html: item?.content }} />
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <Badge bg="secondary" style={{ padding: '6px 12px' }}>{item?.status}</Badge>
+                <Badge bg="info" style={{ padding: '6px 12px' }}>{item?.updatedAt}</Badge>
+              </div>
+            </div>
           </Col>
         </Row>
         <Row>
           <Col md={4}>
-            <Card style={{ width: '100%' }}>
+            <Card className="card-equal-height" style={{ position: 'sticky', top: 80 }}>
               <LazyLoadImage
+                className="card-img-top"
                 src={getThumbUrl(item?.thumb_url)}
                 alt={item?.name}
                 effect="blur"
@@ -157,52 +167,52 @@ const DetailPage = () => {
                 style={{ width: '100%', height: 'auto' }}
               />
               <Card.Body>
-                <Card.Title>{item?.name || 'No Title'}</Card.Title>
-                <Card.Title dangerouslySetInnerHTML={{ __html: item?.content }} />
-                <Card.Text>{item?.updatedAt}</Card.Text>
-                <Card.Text>{item?.status}</Card.Text>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                  <Button variant={fav ? 'danger' : 'outline-danger'} onClick={handleToggleFavorite}>
-                    {fav ? 'Bỏ yêu thích' : 'Yêu thích'}
+                <div style={{ marginBottom: 16 }}>
+                  <Button variant={fav ? 'danger' : 'outline-danger'} onClick={handleToggleFavorite} style={{ width: '100%' }}>
+                    {fav ? '❤️ Bỏ yêu thích' : '🤍 Yêu thích'}
                   </Button>
                 </div>
-                <Card.Text>
-                  {item?.category && item.category.length > 0
-                    ? item.category.map((category, index) => (
-                        <Badge bg="info" key={index}>
-                          {category.name}
-                        </Badge>
-                      ))
-                    : 'Others'}
-                </Card.Text>
-                <Card.Text>
-                  {item?.author && item.author.length > 0
-                    ? item.author.map((author, index) => (
-                        <Badge bg="info" key={index} as={Link} to={`/author/${author.slug}`} style={{ cursor: 'pointer' }}>
-                          {author.name}
-                        </Badge>
-                      ))
-                    : 'Others'}
-                </Card.Text>
+                <div style={{ marginBottom: 12 }}>
+                  <small style={{ color: 'rgba(228, 230, 235, 0.7)', display: 'block', marginBottom: 8 }}>Thể loại:</small>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {item?.category && item.category.length > 0
+                      ? item.category.map((category, index) => (
+                          <Badge bg="info" key={index} style={{ fontSize: '0.85rem' }}>
+                            {category.name}
+                          </Badge>
+                        ))
+                      : <Badge bg="secondary">Others</Badge>}
+                  </div>
+                </div>
+                <div>
+                  <small style={{ color: 'rgba(228, 230, 235, 0.7)', display: 'block', marginBottom: 8 }}>Tác giả:</small>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {item?.author && item.author.length > 0
+                      ? item.author.map((author, index) => (
+                          <Badge bg="info" key={index} as={Link} to={`/author/${author.slug}`} style={{ cursor: 'pointer', fontSize: '0.85rem' }}>
+                            {author.name}
+                          </Badge>
+                        ))
+                      : <Badge bg="secondary">Others</Badge>}
+                  </div>
+                </div>
               </Card.Body>
             </Card>
           </Col>
           <Col md={8}>
             <Card>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px' }}>
-                <h5 style={{ margin: 0 }}>Danh sách chương</h5>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <SectionTitle style={{ margin: 0, border: 'none', padding: 0, fontSize: '1.25rem' }}>Danh sách chương</SectionTitle>
                 <Button size="sm" variant="secondary" onClick={() => setDescOrder((v) => !v)}>
-                  {descOrder ? 'Thứ tự: Mới → Cũ' : 'Thứ tự: Cũ → Mới'}
+                  {descOrder ? 'Mới → Cũ' : 'Cũ → Mới'}
                 </Button>
               </div>
               {(() => {
                 const raw = item?.chapters?.[0]?.server_data || [];
                 const list = descOrder ? raw : [...raw].reverse();
                 return (
-                  <div className="chapters-list">
+                  <div className="chapters-list" style={{ maxHeight: 600 }}>
                     {list.map((c, idx) => {
-                      // Tìm prev/next dựa trên thứ tự gốc (raw)
-                      const absoluteIndex = descOrder ? idx : raw.length - 1 - idx;
                       const id = (c.chapter_api_data || '').split('/').pop();
                       const href = `/read/${item.slug}/${id}`;
                       return (
@@ -217,33 +227,23 @@ const DetailPage = () => {
             </Card>
           </Col>
         </Row>
-        <Row>
+        <Row style={{ marginTop: 32 }}>
           <Col>
-            <h3>Truyện liên quan</h3>
+            <SectionTitle>Truyện liên quan</SectionTitle>
             <Row>
               {relatedComics.length > 0 ? (
                 relatedComics.map((comic, index) => (
                   <Col md={3} key={index}>
-                    <Card>
-                      <LazyLoadImage
-                        className="card-img-top"
-                        src={getThumbUrl(comic.thumb_url)}
-                        alt={comic.name}
-                        effect="blur"
-                        onError={onImageErrorHide}
-                        style={{ width: '100%', height: 'auto' }}
-                      />
-                      <Card.Body>
-                        <Card.Title>{comic.name}</Card.Title>
-                        <Button as={Link} to={`/comics/${comic.slug}`}>
-                          More Detail
-                        </Button>
-                      </Card.Body>
-                    </Card>
+                    <ComicCard item={comic} />
                   </Col>
                 ))
               ) : (
-                <p>Không có truyện liên quan</p>
+                <Col>
+                  <div className="empty-state">
+                    <div className="empty-state-icon">📚</div>
+                    <p>Không có truyện liên quan</p>
+                  </div>
+                </Col>
               )}
             </Row>
           </Col>

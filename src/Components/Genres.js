@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { Container, Row, Col, Card, Form, Badge } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Badge, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Menu from './Include/Menu';
 import { apiClient } from '../api/client';
+import SectionTitle from './UI/SectionTitle';
 
 const Genres = () => {
   const [data, setData] = useState([]);
@@ -42,45 +43,48 @@ const Genres = () => {
       </Helmet>
       <Container>
         <Menu />
-        <Row>
+        <Row style={{ marginBottom: 24 }}>
           <Col>
-            <Card>
-              <Card.Body>
-                <Card.Title>Danh sách thể loại</Card.Title>
-                <Form.Control
-                  type="text"
-                  placeholder="Tìm thể loại..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-              </Card.Body>
-            </Card>
+            <div className="hero-section">
+              <SectionTitle style={{ marginTop: 0 }}>Danh sách thể loại</SectionTitle>
+              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 16 }}>Tìm kiếm và khám phá các thể loại truyện</p>
+              <Form.Control
+                type="text"
+                placeholder="Tìm thể loại..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                style={{ maxWidth: 400 }}
+              />
+            </div>
           </Col>
         </Row>
-        <Row style={{ marginTop: 10 }}>
+        <Row>
           {filtered.length > 0 ? (
             filtered.map((g, idx) => (
               <Col md={3} key={idx}>
                 <Card className="card-equal-height">
-                  <Card.Body>
-                    <Card.Title className="card-title-ellipsis" title={g.name}>
+                  <Card.Body style={{ textAlign: 'center' }}>
+                    <Card.Title className="card-title-ellipsis" title={g.name} style={{ fontSize: '1.2rem', marginBottom: 12 }}>
                       {g.name}
                     </Card.Title>
                     {typeof g.total === 'number' && (
-                      <div style={{ marginBottom: 8 }}>
-                        <Badge bg="secondary">{g.total} truyện</Badge>
+                      <div style={{ marginBottom: 12 }}>
+                        <Badge bg="info" style={{ fontSize: '0.9rem', padding: '6px 12px' }}>{g.total} truyện</Badge>
                       </div>
                     )}
-                    <Card.Text>
-                      <Link to={`/genre/${g.slug}`}>Xem truyện</Link>
-                    </Card.Text>
+                    <Button variant="primary" as={Link} to={`/genre/${g.slug}`} style={{ width: '100%' }}>
+                      Xem truyện →
+                    </Button>
                   </Card.Body>
                 </Card>
               </Col>
             ))
           ) : (
             <Col>
-              <Card.Body>Không tìm thấy thể loại phù hợp</Card.Body>
+              <div className="empty-state">
+                <div className="empty-state-icon">🔍</div>
+                <p>Không tìm thấy thể loại phù hợp</p>
+              </div>
             </Col>
           )}
         </Row>

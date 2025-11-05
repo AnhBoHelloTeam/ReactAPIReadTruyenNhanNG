@@ -8,6 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 import ComicCard from './UI/ComicCard';
+import SectionTitle from './UI/SectionTitle';
 
 const Search = () => {
   const [searchParams] = useSearchParams();
@@ -99,25 +100,28 @@ const Search = () => {
         <Menu />
         <Row>
           <Col md={3}>
-            <Card>
+            <Card style={{ position: 'sticky', top: 80 }}>
               <Card.Body>
-                <Card.Title>Bộ lọc</Card.Title>
+                <SectionTitle style={{ marginTop: 0, fontSize: '1.2rem' }}>Bộ lọc</SectionTitle>
                 <Form>
-                  <Form.Group>
-                    <Form.Label>Thể loại</Form.Label>
-                    {genres.map((genre, index) => (
-                      <Form.Check
-                        key={index}
-                        type="checkbox"
-                        label={genre.name}
-                        value={genre.slug}
-                        onChange={handleFilterChange}
-                        checked={filters.genres.includes(genre.slug)}
-                      />
-                    ))}
+                  <Form.Group style={{ marginBottom: 16 }}>
+                    <Form.Label style={{ fontWeight: 600, marginBottom: 8 }}>Thể loại</Form.Label>
+                    <div style={{ maxHeight: 300, overflowY: 'auto', padding: '8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
+                      {genres.map((genre, index) => (
+                        <Form.Check
+                          key={index}
+                          type="checkbox"
+                          label={genre.name}
+                          value={genre.slug}
+                          onChange={handleFilterChange}
+                          checked={filters.genres.includes(genre.slug)}
+                          style={{ marginBottom: 6 }}
+                        />
+                      ))}
+                    </div>
                   </Form.Group>
-                  <Form.Group>
-                    <Form.Label>Trạng thái</Form.Label>
+                  <Form.Group style={{ marginBottom: 16 }}>
+                    <Form.Label style={{ fontWeight: 600, marginBottom: 8 }}>Trạng thái</Form.Label>
                     <Form.Select
                       name="status"
                       value={filters.status}
@@ -130,7 +134,7 @@ const Search = () => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group>
-                    <Form.Label>Sắp xếp</Form.Label>
+                    <Form.Label style={{ fontWeight: 600, marginBottom: 8 }}>Sắp xếp</Form.Label>
                     <Form.Select
                       name="sort"
                       value={filters.sort}
@@ -146,12 +150,10 @@ const Search = () => {
             </Card>
           </Col>
           <Col md={9}>
-            <Card>
-              <Card.Body>
-                <Card.Title>Kết quả tìm kiếm: {query}</Card.Title>
-                <Card.Text>{getdata.data.seoOnPage.descriptionHead}</Card.Text>
-              </Card.Body>
-            </Card>
+            <div className="hero-section" style={{ marginBottom: 24 }}>
+              <SectionTitle style={{ marginTop: 0 }}>Kết quả tìm kiếm: {query || 'Tất cả'}</SectionTitle>
+              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>{getdata.data.seoOnPage.descriptionHead}</p>
+            </div>
             <Row>
               {items && items.length > 0 ? (
                 items.map((item, index) => {

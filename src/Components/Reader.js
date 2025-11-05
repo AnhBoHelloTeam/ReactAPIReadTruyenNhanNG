@@ -182,14 +182,16 @@ const Reader = () => {
       </Helmet>
       <Container>
         <Menu />
-        <div style={{ margin: '10px 0', display: 'flex', gap: 8 }}>
-          <Button as={Link} to={-1}>Quay lại</Button>
-          <Button variant="secondary" disabled={!computedPrev} onClick={handleGoPrev}>← Chương trước</Button>
-          <Button variant="secondary" disabled={!computedNext} onClick={handleGoNext}>Chương sau →</Button>
+        <div style={{ marginBottom: 20 }}>
+          <div className="hero-section" style={{ padding: '16px', marginBottom: 16 }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 8, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              {chapter?.comic_name}
+            </h3>
+            <p style={{ color: 'rgba(228, 230, 235, 0.8)', margin: 0, fontSize: '1.1rem' }}>
+              {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
+            </p>
+          </div>
         </div>
-        <h5 style={{ marginBottom: 10 }}>
-          {chapter?.comic_name} - {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
-        </h5>
         <div className="chapter-container">
           {chapter?.chapter_image?.length ? (
             chapter.chapter_image.map((img, idx) => (

@@ -55,6 +55,30 @@ const Genre = () => {
       </Helmet>
       <Container>
         <Menu />
+        <Row style={{ marginBottom: 24 }}>
+          <Col>
+            <div className="hero-section">
+              <SectionTitle style={{ marginTop: 0 }}>{getdata.data.data.seoOnPage.titleHead}</SectionTitle>
+              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>{getdata.data.data.seoOnPage.descriptionHead}</p>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          {items && items.length > 0 ? (
+            items.map((item, index) => (
+              <Col md={3} key={index}>
+                <ComicCard item={item} />
+              </Col>
+            ))
+          ) : (
+            <Col>
+              <div className="empty-state">
+                <div className="empty-state-icon">📖</div>
+                <p>Không có truyện nào</p>
+              </div>
+            </Col>
+          )}
+        </Row>
         <Pagination className="pagination-container">
           <Pagination.Prev
             onClick={() => currentPage > 1 && paginate(currentPage - 1)}
@@ -82,37 +106,6 @@ const Genre = () => {
             disabled={currentPage === totalPages}
           />
         </Pagination>
-        <Row>
-          <Col>
-            <Card>
-              <Card.Body>
-                <Card.Title>{getdata.data.data.seoOnPage.titleHead}</Card.Title>
-                {getdata.data.data.seoOnPage.descriptionHead}
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          {items && items.length > 0 ? (
-            items.map((item, index) => {
-              const tooltipText = [
-                `Tên: ${item.name}`,
-                `Thể loại: ${item.category ? item.category.map(cat => cat.name).join(', ') : 'Không có'}`,
-                `Mô tả: ${getdata.data.data.seoOnPage.descriptionHead || 'Không có'}`,
-                `Trạng thái: ${getStatus(item)}`,
-              ].join('\n');
-              return (
-                <Col md={3} key={index}>
-                  <ComicCard item={item} />
-                </Col>
-              );
-            })
-          ) : (
-            <Col>
-              <Card.Body>No Content Available</Card.Body>
-            </Col>
-          )}
-        </Row>
       </Container>
     </>
   );

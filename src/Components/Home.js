@@ -90,6 +90,37 @@ const Home = () => {
       </Helmet>
       <Container>
         <Menu />
+        {/* Hero Section */}
+        <Row>
+          <Col>
+            <div className="hero-section">
+              <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 16, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Kho Truyện Tranh Đa Dạng
+              </h1>
+              <p style={{ fontSize: '1.1rem', color: 'rgba(228, 230, 235, 0.8)', marginBottom: 24 }}>
+                Khám phá hàng nghìn bộ truyện mới cập nhật mỗi ngày
+              </p>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-value">24,816</div>
+                  <div className="stat-label">Tổng số truyện</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-value">164</div>
+                  <div className="stat-label">Cập nhật hôm nay</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-value">20,863</div>
+                  <div className="stat-label">Đang phát hành</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-value">3,537</div>
+                  <div className="stat-label">Hoàn thành</div>
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
         <Row>
           <Col>
             <SectionTitle>Truyện Hot</SectionTitle>

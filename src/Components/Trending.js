@@ -8,6 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 import ComicCard from './UI/ComicCard';
+import SectionTitle from './UI/SectionTitle';
 
 const Trending = () => {
   const { slug } = useParams();
@@ -95,20 +96,20 @@ const Trending = () => {
         <Menu />
         <Row>
           <Col md={3}>
-            <Card>
+            <Card style={{ position: 'sticky', top: 80 }}>
               <Card.Body>
-                <Card.Title>Bộ lọc</Card.Title>
+                <SectionTitle style={{ marginTop: 0, fontSize: '1.2rem' }}>Bộ lọc</SectionTitle>
                 <Form>
-                  <Form.Group style={{ marginBottom: 10 }}>
-                    <Form.Label>Thời gian</Form.Label>
+                  <Form.Group style={{ marginBottom: 16 }}>
+                    <Form.Label style={{ fontWeight: 600, marginBottom: 8 }}>Thời gian</Form.Label>
                     <Form.Select value={timeRange} onChange={handleTimeChange}>
                       <option value="day">Hôm nay</option>
                       <option value="week">Tuần</option>
                       <option value="month">Tháng</option>
                     </Form.Select>
                   </Form.Group>
-                  <Form.Group style={{ marginBottom: 10 }}>
-                    <Form.Label>Sắp xếp</Form.Label>
+                  <Form.Group style={{ marginBottom: 16 }}>
+                    <Form.Label style={{ fontWeight: 600, marginBottom: 8 }}>Sắp xếp</Form.Label>
                     <Form.Select value={sortBy} onChange={handleSortChange}>
                       <option value="last_update">Mới cập nhật</option>
                       <option value="views">Lượt xem</option>
@@ -116,8 +117,8 @@ const Trending = () => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group>
-                    <Form.Label>Thể loại</Form.Label>
-                    <div style={{ maxHeight: 220, overflowY: 'auto', border: '1px solid #eee', padding: 8 }}>
+                    <Form.Label style={{ fontWeight: 600, marginBottom: 8 }}>Thể loại</Form.Label>
+                    <div style={{ maxHeight: 300, overflowY: 'auto', padding: '8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)' }}>
                       {genres.map((g) => (
                         <Form.Check
                           key={g.slug}
@@ -125,6 +126,7 @@ const Trending = () => {
                           label={g.name}
                           checked={selectedGenres.includes(g.slug)}
                           onChange={() => handleGenreToggle(g.slug)}
+                          style={{ marginBottom: 6 }}
                         />
                       ))}
                     </div>
@@ -134,12 +136,10 @@ const Trending = () => {
             </Card>
           </Col>
           <Col md={9}>
-            <Card>
-              <Card.Body>
-                <Card.Title>{getdata.data?.data.seoOnPage.titleHead}</Card.Title>
-                <Card.Text>{getdata.data?.data.seoOnPage.descriptionHead}</Card.Text>
-              </Card.Body>
-            </Card>
+            <div className="hero-section" style={{ marginBottom: 24 }}>
+              <SectionTitle style={{ marginTop: 0 }}>{getdata.data?.data.seoOnPage.titleHead}</SectionTitle>
+              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>{getdata.data?.data.seoOnPage.descriptionHead}</p>
+            </div>
             <Row>
           {items && items.length > 0 ? (
             items.map((item, index) => {
@@ -153,11 +153,14 @@ const Trending = () => {
                     <Col md={3} key={index}><ComicCard item={item} /></Col>
               );
             })
-          ) : (
-            <Col>
-              <Card.Body>No Content Available</Card.Body>
-            </Col>
-          )}
+              ) : (
+                <Col>
+                  <div className="empty-state">
+                    <div className="empty-state-icon">📚</div>
+                    <p>Không có truyện nào</p>
+                  </div>
+                </Col>
+              )}
             </Row>
             <Pagination className="pagination-container">
           <Pagination.Prev
