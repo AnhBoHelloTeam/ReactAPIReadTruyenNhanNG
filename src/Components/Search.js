@@ -169,7 +169,10 @@ const Search = () => {
                 })
               ) : (
                 <Col>
-                  <Card.Body>No Content Available</Card.Body>
+                  <div className="empty-state">
+                    <div className="empty-state-icon">🔍</div>
+                    <p>Không tìm thấy kết quả</p>
+                  </div>
                 </Col>
               )}
             </Row>

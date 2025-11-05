@@ -32,7 +32,7 @@ const ComicCard = ({ item }) => {
           ) : 'Others'}
         </Card.Text>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <small style={{ opacity: 0.8 }}>{item.updatedAt}</small>
+          <small style={{ color: '#e4e6eb', fontWeight: 500 }}>{item.updatedAt}</small>
           <Button variant="primary btn-sm" as={Link} to={`/comics/${item.slug}`}>
             Chi tiết
           </Button>

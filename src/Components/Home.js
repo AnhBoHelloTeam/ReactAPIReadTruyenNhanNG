@@ -261,7 +261,10 @@ const Home = () => {
             ))
           ) : (
             <Col>
-              <Card.Body>No Content Available</Card.Body>
+              <div className="empty-state">
+                <div className="empty-state-icon">📚</div>
+                <p>Không có dữ liệu</p>
+              </div>
             </Col>
           )}
         </Row>

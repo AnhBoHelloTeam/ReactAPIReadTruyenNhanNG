@@ -147,7 +147,7 @@ const DetailPage = () => {
               <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 12, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 {item?.name || 'No Title'}
               </h1>
-              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 16 }} dangerouslySetInnerHTML={{ __html: item?.content }} />
+              <div style={{ color: '#e4e6eb', marginBottom: 16, lineHeight: '1.6', fontSize: '1rem', fontWeight: 400 }} dangerouslySetInnerHTML={{ __html: item?.content }} />
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <Badge bg="secondary" style={{ padding: '6px 12px' }}>{item?.status}</Badge>
                 <Badge bg="info" style={{ padding: '6px 12px' }}>{item?.updatedAt}</Badge>
@@ -173,7 +173,7 @@ const DetailPage = () => {
                   </Button>
                 </div>
                 <div style={{ marginBottom: 12 }}>
-                  <small style={{ color: 'rgba(228, 230, 235, 0.7)', display: 'block', marginBottom: 8 }}>Thể loại:</small>
+                  <small style={{ color: '#e4e6eb', fontWeight: 600, display: 'block', marginBottom: 8 }}>Thể loại:</small>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {item?.category && item.category.length > 0
                       ? item.category.map((category, index) => (
@@ -185,7 +185,7 @@ const DetailPage = () => {
                   </div>
                 </div>
                 <div>
-                  <small style={{ color: 'rgba(228, 230, 235, 0.7)', display: 'block', marginBottom: 8 }}>Tác giả:</small>
+                  <small style={{ color: '#e4e6eb', fontWeight: 600, display: 'block', marginBottom: 8 }}>Tác giả:</small>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {item?.author && item.author.length > 0
                       ? item.author.map((author, index) => (
