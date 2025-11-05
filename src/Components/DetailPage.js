@@ -182,14 +182,29 @@ const DetailPage = () => {
         {/* Hero Info */}
         <Row style={{ marginBottom: 24 }}>
           <Col>
-            <div className="hero-section" style={{ padding: '24px', marginBottom: 0 }}>
-              <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 12, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <div className="hero-section" style={{ padding: '32px', marginBottom: 0 }}>
+              <h1 style={{ 
+                fontSize: '2.25rem', 
+                fontWeight: 800, 
+                marginBottom: 16, 
+                background: 'linear-gradient(135deg, #2563eb, #7c3aed, #ec4899)', 
+                WebkitBackgroundClip: 'text', 
+                WebkitTextFillColor: 'transparent',
+                lineHeight: '1.2',
+                letterSpacing: '0.3px'
+              }}>
                 {item?.name || 'No Title'}
               </h1>
-              <div style={{ color: '#1a1a1a', marginBottom: 16, lineHeight: '1.6', fontSize: '1rem', fontWeight: 400 }} dangerouslySetInnerHTML={{ __html: item?.content }} />
+              <div style={{ 
+                color: 'var(--text-primary)', 
+                marginBottom: 20, 
+                lineHeight: '1.7', 
+                fontSize: '1.05rem', 
+                fontWeight: 400 
+              }} dangerouslySetInnerHTML={{ __html: item?.content }} />
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Badge bg="secondary" style={{ padding: '6px 12px' }}>{item?.status}</Badge>
-                <Badge bg="info" style={{ padding: '6px 12px' }}>{item?.updatedAt}</Badge>
+                <Badge bg="secondary" style={{ padding: '8px 14px', fontSize: '0.9rem', fontWeight: 600 }}>{item?.status}</Badge>
+                <Badge bg="info" style={{ padding: '8px 14px', fontSize: '0.9rem', fontWeight: 600 }}>{item?.updatedAt}</Badge>
               </div>
             </div>
           </Col>
@@ -247,9 +262,21 @@ const DetailPage = () => {
           </Col>
           <Col md={8}>
             <Card>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                <SectionTitle style={{ margin: 0, border: 'none', padding: 0, fontSize: '1.25rem' }}>Danh sách chương</SectionTitle>
-                <Button size="sm" variant="secondary" onClick={() => setDescOrder((v) => !v)}>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                padding: '20px 24px', 
+                borderBottom: '1.5px solid var(--border-color)',
+                background: 'var(--bg-card)'
+              }}>
+                <SectionTitle style={{ margin: 0, border: 'none', padding: 0, fontSize: '1.3rem', fontWeight: 700 }}>Danh sách chương</SectionTitle>
+                <Button 
+                  size="sm" 
+                  variant="secondary" 
+                  onClick={() => setDescOrder((v) => !v)}
+                  style={{ borderRadius: '10px', fontWeight: 600 }}
+                >
                   {descOrder ? 'Mới → Cũ' : 'Cũ → Mới'}
                 </Button>
               </div>

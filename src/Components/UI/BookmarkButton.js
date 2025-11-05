@@ -39,29 +39,46 @@ const BookmarkButton = ({ slug, chapterId, currentPage, imageUrl }) => {
 
   return (
     <>
-      <Button
-        variant={isBookmarked ? "warning" : "outline-light"}
-        size="sm"
-        onClick={() => {
-          if (isBookmarked) {
-            handleRemoveBookmark(currentPage);
-          } else {
-            handleAddBookmark();
-          }
-        }}
-        title={isBookmarked ? "Bỏ đánh dấu trang này" : "Đánh dấu trang này"}
-      >
-        {isBookmarked ? '🔖' : '📑'}
-      </Button>
-
-      <Button
-        variant="outline-light"
-        size="sm"
-        onClick={() => setShow(true)}
-        title="Xem danh sách đánh dấu"
-      >
-        📚 {bookmarks.length > 0 && <Badge bg="warning">{bookmarks.length}</Badge>}
-      </Button>
+      <div style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 5, display: 'flex', gap: '8px' }}>
+        <Button
+          variant={isBookmarked ? "warning" : "outline-light"}
+          size="sm"
+          onClick={() => {
+            if (isBookmarked) {
+              handleRemoveBookmark(currentPage);
+            } else {
+              handleAddBookmark();
+            }
+          }}
+          title={isBookmarked ? "Bỏ đánh dấu trang này" : "Đánh dấu trang này"}
+          style={{
+            borderRadius: '10px',
+            padding: '8px 12px',
+            fontWeight: 600,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(8px)'
+          }}
+        >
+          {isBookmarked ? '🔖' : '📑'}
+        </Button>
+        {bookmarks.length > 0 && (
+          <Button
+            variant="outline-light"
+            size="sm"
+            onClick={() => setShow(true)}
+            title="Xem danh sách đánh dấu"
+            style={{
+              borderRadius: '10px',
+              padding: '8px 12px',
+              fontWeight: 600,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+              backdropFilter: 'blur(8px)'
+            }}
+          >
+            📚 <Badge bg="warning" style={{ marginLeft: '4px', fontSize: '0.7rem' }}>{bookmarks.length}</Badge>
+          </Button>
+        )}
+      </div>
 
       <Modal show={show} onHide={() => setShow(false)} centered>
         <Modal.Header closeButton>

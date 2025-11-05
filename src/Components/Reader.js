@@ -11,6 +11,8 @@ import { useReadingPreferences } from '../contexts/ReadingPreferencesContext';
 import ReadingPreferences from './UI/ReadingPreferences';
 import BookmarkButton from './UI/BookmarkButton';
 import { shareChapter } from '../utils/bookmarks';
+import { preloadImages } from '../utils/imageCache';
+import Comments from './UI/Comments';
 
 const Reader = () => {
   const { preferences } = useReadingPreferences();
@@ -270,23 +272,39 @@ const Reader = () => {
       </Helmet>
       <Container>
         <Menu />
-        <div style={{ marginBottom: 20 }}>
-          <div className="hero-section" style={{ padding: '16px', marginBottom: 16 }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 8, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <div style={{ marginBottom: 24 }}>
+          <div className="hero-section" style={{ padding: '24px', marginBottom: 20 }}>
+            <h3 style={{ 
+              fontSize: '1.75rem', 
+              fontWeight: 800, 
+              marginBottom: 12, 
+              background: 'linear-gradient(135deg, #2563eb, #7c3aed)', 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent',
+              lineHeight: '1.3'
+            }}>
               {chapter?.comic_name}
             </h3>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-              <p style={{ color: 'var(--text-primary)', margin: 0, fontSize: '1.1rem', fontWeight: 500 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+              <p style={{ 
+                color: 'var(--text-primary)', 
+                margin: 0, 
+                fontSize: '1.2rem', 
+                fontWeight: 600,
+                letterSpacing: '0.3px'
+              }}>
                 {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
               </p>
               {readingProgress > 0 && (
                 <div style={{ 
-                  padding: '4px 12px', 
+                  padding: '8px 16px', 
                   background: 'linear-gradient(135deg, #2563eb, #7c3aed)', 
-                  borderRadius: '12px',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  color: '#ffffff'
+                  borderRadius: '14px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                  letterSpacing: '0.3px'
                 }}>
                   Đã đọc: {readingProgress}%
                 </div>
