@@ -83,6 +83,7 @@ const Menu = () => {
               <Nav.Link as={Link} to="/trending/hoan-thanh">Hoàn thành</Nav.Link>
               <Nav.Link as={Link} to="/trending/sap-ra-mat">Sắp ra mắt</Nav.Link>
               <Nav.Link as={Link} to="/history">Lịch sử đọc</Nav.Link> {/* Thêm liên kết */}
+              <Nav.Link as={Link} to="/genres">Thể loại (grid)</Nav.Link>
               <NavDropdown title="Thể loại" id="basic-nav-dropdown">
                 {items && items.length > 0 ? (
                   items.map((item, index) => (

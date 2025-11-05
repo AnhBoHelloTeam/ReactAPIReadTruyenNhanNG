@@ -8,6 +8,7 @@ import Search from './Components/Search';
 import History from './Components/History'; // Import History
 import Reader from './Components/Reader';
 import Author from './Components/Author';
+import Genres from './Components/Genres';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/history" element={<History />} />
         <Route path="/read" element={<Reader />} />
         <Route path="/author/:slug" element={<Author />} />
+        <Route path="/genres" element={<Genres />} />
       </Routes>
     </BrowserRouter>
   );
