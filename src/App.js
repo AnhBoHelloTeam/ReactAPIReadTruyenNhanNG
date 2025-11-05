@@ -11,12 +11,14 @@ import Author from './Components/Author';
 import Genres from './Components/Genres';
 import Favorites from './Components/Favorites';
 import ScrollToTop from './Components/UI/ScrollToTop';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
+    <ThemeProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/comics/:slug" element={<DetailPage />} />
         <Route path="/genre/:slug" element={<Genre />} />
@@ -28,8 +30,9 @@ function App() {
         <Route path="/author/:slug" element={<Author />} />
         <Route path="/genres" element={<Genres />} />
         <Route path="/favorites" element={<Favorites />} />
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

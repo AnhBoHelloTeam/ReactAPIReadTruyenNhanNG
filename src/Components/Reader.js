@@ -6,6 +6,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 import axios from 'axios';
+import { saveReadingProgress, getReadingProgress } from '../utils/readingProgress';
 
 const Reader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,6 +24,7 @@ const Reader = () => {
   const [chapters, setChapters] = useState([]);
   const [computedPrev, setComputedPrev] = useState('');
   const [computedNext, setComputedNext] = useState('');
+  const [readingProgress, setReadingProgress] = useState(0);
 
   const fetchChapter = useCallback(async () => {
     if (!api) return;
@@ -67,19 +69,36 @@ const Reader = () => {
     setComputedNext(idx >= 0 && idx < chapters.length - 1 ? chapters[idx + 1].chapter_api_data : '');
   }, [api, chapters]);
 
-  // Restore scroll position for this chapter
+  // Restore scroll position and track reading progress
   useEffect(() => {
+    if (!api || !data || !slug) return;
+    const chapterId = cidFromRoute || api.split('/').pop();
     const key = `reader-scroll:${api}`;
+    const savedProgress = getReadingProgress(slug, chapterId);
+    setReadingProgress(savedProgress);
+    
     const y = Number(localStorage.getItem(key) || 0);
     if (y > 0) {
       window.scrollTo(0, y);
     }
+    
     const onScroll = () => {
       localStorage.setItem(key, String(window.scrollY));
+      
+      // Calculate reading progress
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      const scrollableHeight = documentHeight - windowHeight;
+      const progress = scrollableHeight > 0 ? Math.round((scrollTop / scrollableHeight) * 100) : 0;
+      
+      setReadingProgress(progress);
+      saveReadingProgress(slug, chapterId, progress);
     };
-    window.addEventListener('scroll', onScroll);
+    
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [api]);
+  }, [api, data, slug, cidFromRoute]);
 
   // Keyboard navigation: Left = prev, Right = next
   useEffect(() => {
@@ -187,9 +206,23 @@ const Reader = () => {
             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 8, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               {chapter?.comic_name}
             </h3>
-            <p style={{ color: '#1a1a1a', margin: 0, fontSize: '1.1rem', fontWeight: 500 }}>
-              {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
-            </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+              <p style={{ color: 'var(--text-primary)', margin: 0, fontSize: '1.1rem', fontWeight: 500 }}>
+                {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
+              </p>
+              {readingProgress > 0 && (
+                <div style={{ 
+                  padding: '4px 12px', 
+                  background: 'linear-gradient(135deg, #2563eb, #7c3aed)', 
+                  borderRadius: '12px',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#ffffff'
+                }}>
+                  Đã đọc: {readingProgress}%
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="chapter-container">
@@ -214,34 +247,64 @@ const Reader = () => {
 
       {/* Sticky footer toolbar */}
       <div className="reader-toolbar">
-        <div className="reader-toolbar-inner">
-          <Button as={Link} to="/" variant="dark" size="sm">Trang chủ</Button>
-          <Button variant="secondary" size="sm" disabled={!computedPrev} onClick={handleGoPrev}>← Trước</Button>
-          <Form.Select
-            size="sm"
-            value={api}
-            onChange={(e) => {
-              const targetApi = e.target.value;
-              const id = (targetApi || '').split('/').pop();
-              if (slug && id) navigate(`/read/${slug}/${id}`);
-              else {
-                setSearchParams((p) => {
-                  const n = new URLSearchParams(p);
-                  n.set('api', targetApi);
-                  return n;
-                });
-              }
-            }}
-            style={{ maxWidth: 240 }}
-          >
-            {chapters.map((c, i) => (
-              <option key={i} value={c.chapter_api_data}>
-                {c.chapter_name?.toString().startsWith('Ch') ? c.chapter_name : `Chương ${c.chapter_name}`}
-              </option>
-            ))}
-          </Form.Select>
-          <Button variant="secondary" size="sm" disabled={!computedNext} onClick={handleGoNext}>Sau →</Button>
-          <Button variant="dark" size="sm" disabled>Theo dõi</Button>
+        <div style={{ width: '100%', maxWidth: '1280px', margin: '0 auto', padding: '0 16px' }}>
+          {/* Progress bar */}
+          <div style={{ 
+            width: '100%', 
+            height: '4px', 
+            background: 'rgba(255,255,255,0.2)', 
+            borderRadius: '2px', 
+            marginBottom: '8px',
+            overflow: 'hidden'
+          }}>
+            <div style={{ 
+              width: `${readingProgress}%`, 
+              height: '100%', 
+              background: 'linear-gradient(90deg, #2563eb, #7c3aed)',
+              transition: 'width 0.3s ease',
+              borderRadius: '2px'
+            }} />
+          </div>
+          <div className="reader-toolbar-inner">
+            <Button as={Link} to="/" variant="dark" size="sm">Trang chủ</Button>
+            <Button variant="secondary" size="sm" disabled={!computedPrev} onClick={handleGoPrev}>← Trước</Button>
+            <Form.Select
+              size="sm"
+              value={api}
+              onChange={(e) => {
+                const targetApi = e.target.value;
+                const id = (targetApi || '').split('/').pop();
+                if (slug && id) navigate(`/read/${slug}/${id}`);
+                else {
+                  setSearchParams((p) => {
+                    const n = new URLSearchParams(p);
+                    n.set('api', targetApi);
+                    return n;
+                  });
+                }
+              }}
+              style={{ maxWidth: 240 }}
+            >
+              {chapters.map((c, i) => (
+                <option key={i} value={c.chapter_api_data}>
+                  {c.chapter_name?.toString().startsWith('Ch') ? c.chapter_name : `Chương ${c.chapter_name}`}
+                </option>
+              ))}
+            </Form.Select>
+            <Button variant="secondary" size="sm" disabled={!computedNext} onClick={handleGoNext}>Sau →</Button>
+            <div style={{ 
+              padding: '4px 12px', 
+              background: 'rgba(255,255,255,0.1)', 
+              borderRadius: '6px',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              color: '#ffffff',
+              minWidth: '60px',
+              textAlign: 'center'
+            }}>
+              {readingProgress}%
+            </div>
+          </div>
         </div>
       </div>
     </>

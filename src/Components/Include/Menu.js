@@ -2,6 +2,7 @@ import { apiClient } from '../../api/client';
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Form, Nav, Navbar, NavDropdown, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import ThemeToggle from '../UI/ThemeToggle';
 
 const Menu = () => {
   const navigate = useNavigate();
@@ -85,6 +86,7 @@ const Menu = () => {
               <Nav.Link as={Link} to="/history">Lịch sử đọc</Nav.Link> {/* Thêm liên kết */}
               <Nav.Link as={Link} to="/favorites">Yêu thích</Nav.Link>
               <Nav.Link as={Link} to="/genres">Thể loại (grid)</Nav.Link>
+              <ThemeToggle />
               <NavDropdown title="Thể loại" id="basic-nav-dropdown">
                 {items && items.length > 0 ? (
                   items.map((item, index) => (
@@ -125,8 +127,8 @@ const Menu = () => {
                       top: '100%',
                       left: 0,
                       right: 0,
-                      background: '#ffffff',
-                      border: '1px solid rgba(0,0,0,0.1)',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border-color)',
                       borderRadius: '8px',
                       zIndex: 1100,
                       maxHeight: 400,
@@ -145,16 +147,16 @@ const Menu = () => {
                           cursor: 'pointer',
                           borderBottom: idx < suggestions.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
                           transition: 'all 0.2s ease',
-                          color: '#1a1a1a',
+                          color: 'var(--text-primary)',
                         }}
                         onClick={() => handleSelectSuggest(s.slug)}
                         onMouseEnter={(e) => {
-                          e.target.style.background = '#f5f7fa';
+                          e.target.style.background = 'var(--bg-secondary)';
                           e.target.style.color = '#2563eb';
                         }}
                         onMouseLeave={(e) => {
                           e.target.style.background = 'transparent';
-                          e.target.style.color = '#1a1a1a';
+                          e.target.style.color = 'var(--text-primary)';
                         }}
                         title={s.name}
                       >
