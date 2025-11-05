@@ -203,7 +203,8 @@ const DetailPage = () => {
                     {list.map((c, idx) => {
                       // Tìm prev/next dựa trên thứ tự gốc (raw)
                       const absoluteIndex = descOrder ? idx : raw.length - 1 - idx;
-                      const href = `/read?api=${encodeURIComponent(c.chapter_api_data)}&slug=${encodeURIComponent(item.slug)}`;
+                      const id = (c.chapter_api_data || '').split('/').pop();
+                      const href = `/read/${item.slug}/${id}`;
                       return (
                         <Link key={idx} to={href} className="chapter-row">
                           <span className="chapter-name">{c.chapter_name?.toString().startsWith('Ch') ? c.chapter_name : `Chương ${c.chapter_name}`}</span>

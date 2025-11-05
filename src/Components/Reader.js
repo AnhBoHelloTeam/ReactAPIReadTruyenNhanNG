@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate, useParams } from 'react-router-dom';
 import { Container, Button } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -9,9 +9,13 @@ import axios from 'axios';
 
 const Reader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const routeParams = useParams();
   const navigate = useNavigate();
-  const api = searchParams.get('api') || '';
-  const slug = searchParams.get('slug') || '';
+  const slug = routeParams.slug || searchParams.get('slug') || '';
+  const cidFromRoute = routeParams.cid || '';
+  const api = cidFromRoute
+    ? `https://sv1.otruyencdn.com/v1/api/chapter/${cidFromRoute}`
+    : (searchParams.get('api') || '');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -131,20 +135,30 @@ const Reader = () => {
 
   const handleGoPrev = () => {
     if (!computedPrev) return;
-    setSearchParams((p) => {
-      const n = new URLSearchParams(p);
-      n.set('api', computedPrev);
-      return n;
-    });
+    const id = (computedPrev || '').split('/').pop();
+    if (slug && id) {
+      navigate(`/read/${slug}/${id}`);
+    } else {
+      setSearchParams((p) => {
+        const n = new URLSearchParams(p);
+        n.set('api', computedPrev);
+        return n;
+      });
+    }
   };
 
   const handleGoNext = () => {
     if (!computedNext) return;
-    setSearchParams((p) => {
-      const n = new URLSearchParams(p);
-      n.set('api', computedNext);
-      return n;
-    });
+    const id = (computedNext || '').split('/').pop();
+    if (slug && id) {
+      navigate(`/read/${slug}/${id}`);
+    } else {
+      setSearchParams((p) => {
+        const n = new URLSearchParams(p);
+        n.set('api', computedNext);
+        return n;
+      });
+    }
   };
 
   const onImgErrorRetry = (e) => {

@@ -22,6 +22,7 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/history" element={<History />} />
         <Route path="/read" element={<Reader />} />
+        <Route path="/read/:slug/:cid" element={<Reader />} />
         <Route path="/author/:slug" element={<Author />} />
         <Route path="/genres" element={<Genres />} />
         <Route path="/favorites" element={<Favorites />} />
