@@ -85,8 +85,8 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>{getdata.data?.data?.seoOnPage.titleHead}</title>
-        <meta name="description" content={getdata.data?.data?.seoOnPage.descriptionHead} />
+        <title>{getdata.data?.data?.seoOnPage?.titleHead || 'Otruyen NhanNG'}</title>
+        <meta name="description" content={getdata.data?.data?.seoOnPage?.descriptionHead || 'Otruyen NhanNG - Đọc truyện tranh miễn phí, cập nhật nhanh'} />
       </Helmet>
       <Container>
         <Menu />
