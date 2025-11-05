@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams, Link, useNavigate, useParams } from 'react-router-dom';
 import { Container, Button, Form } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
@@ -7,8 +7,11 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 import axios from 'axios';
 import { saveReadingProgress, getReadingProgress } from '../utils/readingProgress';
+import { useReadingPreferences } from '../contexts/ReadingPreferencesContext';
+import ReadingPreferences from './UI/ReadingPreferences';
 
 const Reader = () => {
+  const { preferences } = useReadingPreferences();
   const [searchParams, setSearchParams] = useSearchParams();
   const routeParams = useParams();
   const navigate = useNavigate();
@@ -25,6 +28,8 @@ const Reader = () => {
   const [computedPrev, setComputedPrev] = useState('');
   const [computedNext, setComputedNext] = useState('');
   const [readingProgress, setReadingProgress] = useState(0);
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(false);
+  const scrollIntervalRef = useRef(null);
 
   const fetchChapter = useCallback(async () => {
     if (!api) return;
@@ -97,7 +102,13 @@ const Reader = () => {
     };
     
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+    };
   }, [api, data, slug, cidFromRoute]);
 
   // Keyboard navigation: Left = prev, Right = next
@@ -225,7 +236,17 @@ const Reader = () => {
             </div>
           </div>
         </div>
-        <div className="chapter-container">
+        <div 
+          className="chapter-container"
+          style={{
+            fontSize: `${preferences.fontSize}px`,
+            filter: `brightness(${preferences.brightness}%)`,
+            display: preferences.readingMode === 'horizontal' ? 'flex' : 'block',
+            overflowX: preferences.readingMode === 'horizontal' ? 'auto' : 'visible',
+            flexDirection: preferences.readingMode === 'horizontal' ? 'row' : 'column',
+            gap: preferences.readingMode === 'horizontal' ? '10px' : '0'
+          }}
+        >
           {chapter?.chapter_image?.length ? (
             chapter.chapter_image.map((img, idx) => (
               <LazyLoadImage
@@ -234,7 +255,12 @@ const Reader = () => {
                 alt={`Page ${idx + 1}`}
                 effect="blur"
                 onError={onImgErrorRetry}
-                style={{ width: '100%', height: 'auto', marginBottom: '10px' }}
+                style={{ 
+                  width: preferences.readingMode === 'horizontal' ? 'auto' : '100%',
+                  height: preferences.readingMode === 'horizontal' ? '100vh' : 'auto',
+                  marginBottom: preferences.readingMode === 'horizontal' ? '0' : '10px',
+                  objectFit: preferences.readingMode === 'horizontal' ? 'contain' : 'cover'
+                }}
               />
             ))
           ) : (
@@ -267,6 +293,30 @@ const Reader = () => {
           </div>
           <div className="reader-toolbar-inner">
             <Button as={Link} to="/" variant="dark" size="sm">Trang chủ</Button>
+            <ReadingPreferences />
+            <Button 
+              variant={autoScrollEnabled ? "success" : "outline-light"} 
+              size="sm" 
+              onClick={() => {
+                if (autoScrollEnabled) {
+                  // Stop auto scroll
+                  if (scrollIntervalRef.current) {
+                    clearInterval(scrollIntervalRef.current);
+                    scrollIntervalRef.current = null;
+                  }
+                  setAutoScrollEnabled(false);
+                } else {
+                  // Start auto scroll
+                  setAutoScrollEnabled(true);
+                  const scrollSpeed = (preferences.autoScrollSpeed || 50) / 100;
+                  scrollIntervalRef.current = setInterval(() => {
+                    window.scrollBy(0, 1 * scrollSpeed);
+                  }, 10);
+                }
+              }}
+            >
+              {autoScrollEnabled ? '⏸️' : '▶️'}
+            </Button>
             <Button variant="secondary" size="sm" disabled={!computedPrev} onClick={handleGoPrev}>← Trước</Button>
             <Form.Select
               size="sm"

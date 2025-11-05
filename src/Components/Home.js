@@ -22,16 +22,23 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allItems, setAllItems] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const items = getdata?.data?.data?.items;
   const itemsPerPage = 24;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await apiClient.get(
-          `https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=${currentPage}`
+          `https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=1`
         );
         setData(response);
+        const newItems = response?.data?.data?.items || [];
+        setAllItems(newItems);
+        setHasMore(newItems.length >= itemsPerPage);
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -39,7 +46,45 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [currentPage]);
+  }, []);
+
+  // Infinite scroll load more
+  useEffect(() => {
+    const loadMore = async () => {
+      if (!hasMore || loadingMore) return;
+      
+      setLoadingMore(true);
+      try {
+        const nextPage = Math.floor(allItems.length / itemsPerPage) + 1;
+        const response = await apiClient.get(
+          `https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=${nextPage}`
+        );
+        const newItems = response?.data?.data?.items || [];
+        if (newItems.length > 0) {
+          setAllItems(prev => [...prev, ...newItems]);
+          setHasMore(newItems.length >= itemsPerPage);
+        } else {
+          setHasMore(false);
+        }
+      } catch (e) {
+        console.error('Error loading more:', e);
+        setHasMore(false);
+      } finally {
+        setLoadingMore(false);
+      }
+    };
+
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 1000) {
+        loadMore();
+      }
+    };
+
+    if (hasMore) {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [hasMore, loadingMore, allItems.length, itemsPerPage]);
 
   useEffect(() => {
     const fetchHotComics = async () => {
@@ -91,12 +136,7 @@ const Home = () => {
     );
   }
 
-  const totalItems = getdata?.data?.params?.pagination?.totalItems || 0;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const itemsToDisplay = allItems.length > 0 ? allItems : items;
 
   return (
     <>
@@ -231,33 +271,6 @@ const Home = () => {
             </Row>
           </Col>
         </Row>
-        <Pagination className="pagination-container">
-          <Pagination.Prev
-            onClick={() => currentPage > 1 && paginate(currentPage - 1)}
-            disabled={currentPage === 1}
-          />
-          {[...Array(totalPages)].map((_, index) => {
-            const pageNumber = index + 1;
-            const rangeStart = Math.floor((currentPage - 1) / 5) * 5 + 1;
-            const rangeEnd = Math.min(rangeStart + 4, totalPages);
-            if (pageNumber >= rangeStart && pageNumber <= rangeEnd) {
-              return (
-                <Pagination.Item
-                  key={pageNumber}
-                  active={pageNumber === currentPage}
-                  onClick={() => paginate(pageNumber)}
-                >
-                  {pageNumber}
-                </Pagination.Item>
-              );
-            }
-            return null;
-          })}
-          <Pagination.Next
-            onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          />
-        </Pagination>
         <Row>
           <Col>
             <Card>
@@ -269,9 +282,9 @@ const Home = () => {
           </Col>
         </Row>
         <Row>
-          {items && items.length > 0 ? (
-            items.map((item, index) => (
-              <Col md={3} key={index}>
+          {itemsToDisplay && itemsToDisplay.length > 0 ? (
+            itemsToDisplay.map((item, index) => (
+              <Col md={3} key={`${item.slug}-${index}`}>
                 <ComicCard item={item} />
               </Col>
             ))
@@ -284,33 +297,24 @@ const Home = () => {
             </Col>
           )}
         </Row>
-        <Pagination className="pagination-container">
-          <Pagination.Prev
-            onClick={() => currentPage > 1 && paginate(currentPage - 1)}
-            disabled={currentPage === 1}
-          />
-          {[...Array(totalPages)].map((_, index) => {
-            const pageNumber = index + 1;
-            const rangeStart = Math.floor((currentPage - 1) / 5) * 5 + 1;
-            const rangeEnd = Math.min(rangeStart + 4, totalPages);
-            if (pageNumber >= rangeStart && pageNumber <= rangeEnd) {
-              return (
-                <Pagination.Item
-                  key={pageNumber}
-                  active={pageNumber === currentPage}
-                  onClick={() => paginate(pageNumber)}
-                >
-                  {pageNumber}
-                </Pagination.Item>
-              );
-            }
-            return null;
-          })}
-          <Pagination.Next
-            onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          />
-        </Pagination>
+        {loadingMore && (
+          <Row>
+            <Col>
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <div className="skeleton" style={{ height: '400px', borderRadius: '12px', marginBottom: '16px' }}></div>
+              </div>
+            </Col>
+          </Row>
+        )}
+        {!hasMore && itemsToDisplay.length > 0 && (
+          <Row>
+            <Col>
+              <div className="empty-state" style={{ padding: '40px 20px' }}>
+                <p>Đã hiển thị tất cả truyện</p>
+              </div>
+            </Col>
+          </Row>
+        )}
       </Container>
     </>
   );

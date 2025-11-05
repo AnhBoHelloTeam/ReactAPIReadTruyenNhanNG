@@ -4,11 +4,31 @@ import { Link } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { getThumbUrl, onImageErrorHide } from '../../utils/image';
+import { hasNewChapters } from '../../utils/notifications';
 
 const ComicCard = ({ item }) => {
   if (!item) return null;
+  const hasNew = hasNewChapters(item.slug);
   return (
-    <Card className="card-equal-height">
+    <Card className="card-equal-height" style={{ position: 'relative' }}>
+      {hasNew && (
+        <div style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+          color: '#ffffff',
+          padding: '4px 8px',
+          borderRadius: '12px',
+          fontSize: '0.7rem',
+          fontWeight: 700,
+          zIndex: 10,
+          boxShadow: '0 2px 8px rgba(239, 68, 68, 0.5)',
+          animation: 'pulse 2s ease-in-out infinite'
+        }}>
+          NEW
+        </div>
+      )}
       <LazyLoadImage
         className="card-img-top"
         src={getThumbUrl(item.thumb_url)}

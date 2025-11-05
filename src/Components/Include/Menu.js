@@ -1,8 +1,10 @@
 import { apiClient } from '../../api/client';
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Container, Form, Nav, Navbar, NavDropdown, Row } from 'react-bootstrap';
+import { Button, Col, Container, Form, Nav, Navbar, NavDropdown, Row, Badge } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import ThemeToggle from '../UI/ThemeToggle';
+import { getFavorites } from '../../utils/favorites';
+import { checkForNewChapters, getNewChaptersCount } from '../../utils/notifications';
 
 const Menu = () => {
   const navigate = useNavigate();
@@ -12,6 +14,7 @@ const Menu = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggest, setShowSuggest] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [newChaptersCount, setNewChaptersCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +24,22 @@ const Menu = () => {
       } catch (error) {}
     };
     fetchData();
+  }, []);
+
+  // Check for new chapters
+  useEffect(() => {
+    const checkChapters = async () => {
+      const favorites = getFavorites();
+      if (favorites.length > 0) {
+        await checkForNewChapters(favorites, apiClient);
+        setNewChaptersCount(getNewChaptersCount());
+      }
+    };
+    
+    checkChapters();
+    // Check every 30 minutes
+    const interval = setInterval(checkChapters, 30 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // debounce suggest
@@ -84,7 +103,14 @@ const Menu = () => {
               <Nav.Link as={Link} to="/trending/hoan-thanh">Hoàn thành</Nav.Link>
               <Nav.Link as={Link} to="/trending/sap-ra-mat">Sắp ra mắt</Nav.Link>
               <Nav.Link as={Link} to="/history">Lịch sử đọc</Nav.Link> {/* Thêm liên kết */}
-              <Nav.Link as={Link} to="/favorites">Yêu thích</Nav.Link>
+              <Nav.Link as={Link} to="/favorites">
+                Yêu thích
+                {newChaptersCount > 0 && (
+                  <Badge bg="danger" style={{ marginLeft: '6px', fontSize: '0.7rem' }}>
+                    {newChaptersCount}
+                  </Badge>
+                )}
+              </Nav.Link>
               <Nav.Link as={Link} to="/genres">Thể loại (grid)</Nav.Link>
               <ThemeToggle />
               <NavDropdown title="Thể loại" id="basic-nav-dropdown">
