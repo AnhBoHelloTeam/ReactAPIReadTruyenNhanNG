@@ -67,7 +67,7 @@ const Author = () => {
           <Col>
             <div className="hero-section">
               <SectionTitle style={{ marginTop: 0 }}>{title}</SectionTitle>
-              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>{desc}</p>
+              <p style={{ color: '#1a1a1a', marginBottom: 0 }}>{desc}</p>
             </div>
           </Col>
         </Row>

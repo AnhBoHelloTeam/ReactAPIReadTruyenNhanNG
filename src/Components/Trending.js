@@ -138,7 +138,7 @@ const Trending = () => {
           <Col md={9}>
             <div className="hero-section" style={{ marginBottom: 24 }}>
               <SectionTitle style={{ marginTop: 0 }}>{getdata.data?.data.seoOnPage.titleHead}</SectionTitle>
-              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>{getdata.data?.data.seoOnPage.descriptionHead}</p>
+              <p style={{ color: '#1a1a1a', marginBottom: 0 }}>{getdata.data?.data.seoOnPage.descriptionHead}</p>
             </div>
             <Row>
           {items && items.length > 0 ? (

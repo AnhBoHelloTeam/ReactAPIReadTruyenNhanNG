@@ -47,7 +47,7 @@ const Genres = () => {
           <Col>
             <div className="hero-section">
               <SectionTitle style={{ marginTop: 0 }}>Danh sách thể loại</SectionTitle>
-              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 16 }}>Tìm kiếm và khám phá các thể loại truyện</p>
+              <p style={{ color: '#1a1a1a', marginBottom: 16 }}>Tìm kiếm và khám phá các thể loại truyện</p>
               <Form.Control
                 type="text"
                 placeholder="Tìm thể loại..."

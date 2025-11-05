@@ -245,13 +245,35 @@ code {
 }
 
 h3, .h3 {
-  color: #ffffff !important;
+  color: #1a1a1a !important;
   margin: 18px 0 12px;
   font-weight: 700;
   letter-spacing: 0.2px;
 }
 h1, h2, h4, h5, h6 {
-  color: #ffffff !important;
+  color: #1a1a1a !important;
+}
+
+/* Card components - default styling for white cards */
+.card:not(.card-equal-height) {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.1) !important;
+}
+.card:not(.card-equal-height) .card-body {
+  color: #1a1a1a !important;
+}
+.card:not(.card-equal-height) .card-title {
+  color: #1a1a1a !important;
+  font-weight: 600;
+}
+.card:not(.card-equal-height) .card-text {
+  color: #333333 !important;
+}
+.card:not(.card-equal-height) small {
+  color: #666666 !important;
+}
+.card:not(.card-equal-height) .section-title {
+  color: #1a1a1a !important;
 }
 
 /* Navbar dark */
@@ -299,6 +321,16 @@ h1, h2, h4, h5, h6 {
 .form-control::placeholder {
   color: rgba(228, 230, 235, 0.6) !important;
 }
+.form-label {
+  color: #1a1a1a !important;
+  font-weight: 600;
+}
+.card:not(.card-equal-height) .form-label {
+  color: #1a1a1a !important;
+}
+.card:not(.card-equal-height) .form-check-label {
+  color: #1a1a1a !important;
+}
 
 /* Section headings */
 .section-title {
@@ -312,7 +344,7 @@ h1, h2, h4, h5, h6 {
   padding-bottom: 12px;
   border-bottom: 2px solid rgba(99, 179, 237, 0.3);
   position: relative;
-  color: #ffffff !important;
+  color: #1a1a1a !important;
 }
 .section-title::before {
   content: '';
@@ -341,7 +373,7 @@ h1, h2, h4, h5, h6 {
 }
 .hero-section p,
 .hero-section div {
-  color: #e4e6eb !important;
+  color: #1a1a1a !important;
 }
 .hero-section p {
   line-height: 1.6;

@@ -147,7 +147,7 @@ const DetailPage = () => {
               <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 12, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 {item?.name || 'No Title'}
               </h1>
-              <div style={{ color: '#e4e6eb', marginBottom: 16, lineHeight: '1.6', fontSize: '1rem', fontWeight: 400 }} dangerouslySetInnerHTML={{ __html: item?.content }} />
+              <div style={{ color: '#1a1a1a', marginBottom: 16, lineHeight: '1.6', fontSize: '1rem', fontWeight: 400 }} dangerouslySetInnerHTML={{ __html: item?.content }} />
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <Badge bg="secondary" style={{ padding: '6px 12px' }}>{item?.status}</Badge>
                 <Badge bg="info" style={{ padding: '6px 12px' }}>{item?.updatedAt}</Badge>

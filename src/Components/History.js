@@ -26,7 +26,7 @@ const History = () => {
           <Col>
             <div className="hero-section">
               <SectionTitle style={{ marginTop: 0 }}>Lịch sử đọc</SectionTitle>
-              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>Tiếp tục đọc những truyện bạn đã xem</p>
+              <p style={{ color: '#1a1a1a', marginBottom: 0 }}>Tiếp tục đọc những truyện bạn đã xem</p>
             </div>
           </Col>
         </Row>

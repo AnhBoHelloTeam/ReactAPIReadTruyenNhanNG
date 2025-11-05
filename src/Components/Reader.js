@@ -187,7 +187,7 @@ const Reader = () => {
             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 8, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               {chapter?.comic_name}
             </h3>
-            <p style={{ color: 'rgba(228, 230, 235, 0.8)', margin: 0, fontSize: '1.1rem' }}>
+            <p style={{ color: '#1a1a1a', margin: 0, fontSize: '1.1rem', fontWeight: 500 }}>
               {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
             </p>
           </div>

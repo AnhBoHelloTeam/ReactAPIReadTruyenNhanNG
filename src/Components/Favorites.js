@@ -32,7 +32,7 @@ const Favorites = () => {
           <Col>
             <div className="hero-section">
               <SectionTitle style={{ marginTop: 0 }}>Yêu thích</SectionTitle>
-              <p style={{ color: 'rgba(228, 230, 235, 0.8)', marginBottom: 0 }}>Danh sách truyện bạn đã đánh dấu yêu thích</p>
+              <p style={{ color: '#1a1a1a', marginBottom: 0 }}>Danh sách truyện bạn đã đánh dấu yêu thích</p>
             </div>
           </Col>
         </Row>
