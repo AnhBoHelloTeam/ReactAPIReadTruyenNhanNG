@@ -12,6 +12,8 @@ import ComicCard from './UI/ComicCard';
 import SectionTitle from './UI/SectionTitle';
 import SkeletonGrid from './UI/SkeletonLoader';
 import ErrorState from './UI/ErrorState';
+import { shareComic } from '../utils/bookmarks';
+import { getSimilarComics } from '../utils/recommendations';
 
 const DetailPage = () => {
   const { slug } = useParams();
@@ -77,10 +79,26 @@ const DetailPage = () => {
   useEffect(() => {
     const fetchRelated = async () => {
       try {
-        const categorySlug = item?.category[0]?.slug;
-        if (categorySlug) {
-          const response = await apiClient.get(`/the-loai/${categorySlug}`);
-          setRelatedComics(response.data.data.items.slice(0, 4)); // Lấy 4 truyện liên quan
+        // Try to get similar comics first
+        const response = await apiClient.get('/danh-sach/truyen-moi?page=1');
+        const items = response?.data?.data?.items || [];
+        
+        if (item) {
+          const similar = getSimilarComics(item, items);
+          if (similar.length > 0) {
+            setRelatedComics(similar);
+          } else {
+            // Fallback to category-based
+            const categorySlug = item?.category?.[0]?.slug;
+            if (categorySlug) {
+              const categoryResponse = await apiClient.get(`/the-loai/${categorySlug}`);
+              setRelatedComics(categoryResponse.data.data.items.slice(0, 4));
+            } else {
+              setRelatedComics(items.slice(0, 4));
+            }
+          }
+        } else {
+          setRelatedComics(items.slice(0, 4));
         }
       } catch (error) {
         console.error('Error fetching related comics:', error);
@@ -188,9 +206,16 @@ const DetailPage = () => {
                 style={{ width: '100%', height: 'auto' }}
               />
               <Card.Body>
-                <div style={{ marginBottom: 16 }}>
+                <div style={{ marginBottom: 16, display: 'flex', gap: '8px', flexDirection: 'column' }}>
                   <Button variant={fav ? 'danger' : 'outline-danger'} onClick={handleToggleFavorite} style={{ width: '100%' }}>
                     {fav ? '❤️ Bỏ yêu thích' : '🤍 Yêu thích'}
+                  </Button>
+                  <Button 
+                    variant="outline-primary" 
+                    onClick={() => shareComic(item?.slug, item?.name)} 
+                    style={{ width: '100%' }}
+                  >
+                    🔗 Chia sẻ
                   </Button>
                 </div>
                 <div style={{ marginBottom: 12 }}>

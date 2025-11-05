@@ -9,6 +9,8 @@ import axios from 'axios';
 import { saveReadingProgress, getReadingProgress } from '../utils/readingProgress';
 import { useReadingPreferences } from '../contexts/ReadingPreferencesContext';
 import ReadingPreferences from './UI/ReadingPreferences';
+import BookmarkButton from './UI/BookmarkButton';
+import { shareChapter } from '../utils/bookmarks';
 
 const Reader = () => {
   const { preferences } = useReadingPreferences();
@@ -66,6 +68,29 @@ const Reader = () => {
     return () => { cancelled = true; };
   }, [slug]);
 
+  // Prefetch next chapter images
+  useEffect(() => {
+    if (!data || !computedNext || !cdn) return;
+    
+    const prefetchNextChapter = async () => {
+      try {
+        const nextRes = await axios.get(computedNext);
+        const nextChapter = nextRes?.data?.data?.item;
+        if (nextChapter?.chapter_image && nextChapter.chapter_image.length > 0) {
+          const imageUrls = nextChapter.chapter_image
+            .slice(0, 5) // Prefetch first 5 images
+            .map(img => `${cdn}/${nextChapter.chapter_path}/${img.image_file}`);
+          preloadImages(imageUrls);
+        }
+      } catch (e) {
+        console.error('Error prefetching next chapter', e);
+      }
+    };
+    
+    const timer = setTimeout(prefetchNextChapter, 2000);
+    return () => clearTimeout(timer);
+  }, [data, computedNext, cdn]);
+
   // Compute prev/next whenever api or chapters change
   useEffect(() => {
     if (!api || !chapters.length) return;
@@ -111,29 +136,62 @@ const Reader = () => {
     };
   }, [api, data, slug, cidFromRoute]);
 
-  // Keyboard navigation: Left = prev, Right = next
+  // Keyboard navigation: Left = prev, Right = next, Space = scroll, Home = top, End = bottom
   useEffect(() => {
     const onKey = (e) => {
+      // Prevent default when typing in inputs
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        return;
+      }
+      
       if (e.key === 'ArrowLeft' && computedPrev) {
         e.preventDefault();
-        setSearchParams((p) => {
-          const n = new URLSearchParams(p);
-          n.set('api', computedPrev);
-          // prev/next become relative to the new api; keep existing if provided in URL
-          return n;
-        });
+        const id = (computedPrev || '').split('/').pop();
+        if (slug && id) {
+          navigate(`/read/${slug}/${id}`);
+        } else {
+          setSearchParams((p) => {
+            const n = new URLSearchParams(p);
+            n.set('api', computedPrev);
+            return n;
+          });
+        }
       } else if (e.key === 'ArrowRight' && computedNext) {
         e.preventDefault();
-        setSearchParams((p) => {
-          const n = new URLSearchParams(p);
-          n.set('api', computedNext);
-          return n;
-        });
+        const id = (computedNext || '').split('/').pop();
+        if (slug && id) {
+          navigate(`/read/${slug}/${id}`);
+        } else {
+          setSearchParams((p) => {
+            const n = new URLSearchParams(p);
+            n.set('api', computedNext);
+            return n;
+          });
+        }
+      } else if (e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        // Toggle auto scroll
+        setAutoScrollEnabled(prev => !prev);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+      } else if (e.key === 'Escape') {
+        // Stop auto scroll
+        if (autoScrollEnabled) {
+          setAutoScrollEnabled(false);
+          if (scrollIntervalRef.current) {
+            clearInterval(scrollIntervalRef.current);
+            scrollIntervalRef.current = null;
+          }
+        }
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [computedPrev, computedNext, setSearchParams]);
+  }, [computedPrev, computedNext, slug, navigate, setSearchParams, autoScrollEnabled]);
 
   // Simple prefetch for next chapter images
   useEffect(() => {
@@ -248,21 +306,31 @@ const Reader = () => {
           }}
         >
           {chapter?.chapter_image?.length ? (
-            chapter.chapter_image.map((img, idx) => (
-              <LazyLoadImage
-                key={idx}
-                src={`${cdn}/${chapter.chapter_path}/${img.image_file}`}
-                alt={`Page ${idx + 1}`}
-                effect="blur"
-                onError={onImgErrorRetry}
-                style={{ 
-                  width: preferences.readingMode === 'horizontal' ? 'auto' : '100%',
-                  height: preferences.readingMode === 'horizontal' ? '100vh' : 'auto',
-                  marginBottom: preferences.readingMode === 'horizontal' ? '0' : '10px',
-                  objectFit: preferences.readingMode === 'horizontal' ? 'contain' : 'cover'
-                }}
-              />
-            ))
+            chapter.chapter_image.map((img, idx) => {
+              const imageUrl = `${cdn}/${chapter.chapter_path}/${img.image_file}`;
+              return (
+                <div key={idx} style={{ position: 'relative' }}>
+                  <LazyLoadImage
+                    src={imageUrl}
+                    alt={`Page ${idx + 1}`}
+                    effect="blur"
+                    onError={onImgErrorRetry}
+                    style={{ 
+                      width: preferences.readingMode === 'horizontal' ? 'auto' : '100%',
+                      height: preferences.readingMode === 'horizontal' ? '100vh' : 'auto',
+                      marginBottom: preferences.readingMode === 'horizontal' ? '0' : '10px',
+                      objectFit: preferences.readingMode === 'horizontal' ? 'contain' : 'cover'
+                    }}
+                  />
+                  <BookmarkButton
+                    slug={slug}
+                    chapterId={cidFromRoute || api.split('/').pop()}
+                    currentPage={idx + 1}
+                    imageUrl={imageUrl}
+                  />
+                </div>
+              );
+            })
           ) : (
             <p>No images.</p>
           )}
@@ -294,6 +362,15 @@ const Reader = () => {
           <div className="reader-toolbar-inner">
             <Button as={Link} to="/" variant="dark" size="sm">Trang chủ</Button>
             <ReadingPreferences />
+            <Button
+              variant="outline-light"
+              size="sm"
+              onClick={() => shareChapter(slug, cidFromRoute || api.split('/').pop(), chapter?.chapter_name || '')}
+              title="Chia sẻ chapter"
+            >
+              🔗
+            </Button>
+            <Comments slug={slug} chapterId={cidFromRoute || api.split('/').pop()} />
             <Button 
               variant={autoScrollEnabled ? "success" : "outline-light"} 
               size="sm" 

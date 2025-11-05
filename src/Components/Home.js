@@ -11,6 +11,7 @@ import ComicCard from './UI/ComicCard';
 import SectionTitle from './UI/SectionTitle';
 import SkeletonGrid from './UI/SkeletonLoader';
 import ErrorState from './UI/ErrorState';
+import { getRecentlyViewed } from '../utils/recommendations';
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -25,6 +26,7 @@ const Home = () => {
   const [allItems, setAllItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
   const items = getdata?.data?.data?.items;
   const itemsPerPage = 24;
 
@@ -117,6 +119,9 @@ const Home = () => {
       }
     };
     fetchBlocks();
+    
+    // Get recently viewed
+    setRecentlyViewed(getRecentlyViewed(8));
   }, []);
 
   if (loading) {

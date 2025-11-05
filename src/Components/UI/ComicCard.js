@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Badge, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { getThumbUrl, onImageErrorHide } from '../../utils/image';
 import { hasNewChapters } from '../../utils/notifications';
+import QuickView from './QuickView';
 
 const ComicCard = ({ item }) => {
+  const [showQuickView, setShowQuickView] = useState(false);
   if (!item) return null;
   const hasNew = hasNewChapters(item.slug);
   return (
-    <Card className="card-equal-height" style={{ position: 'relative' }}>
+    <>
+      <Card 
+        className="card-equal-height" 
+        style={{ position: 'relative', cursor: 'pointer' }}
+        onMouseEnter={() => setShowQuickView(true)}
+        onMouseLeave={() => setShowQuickView(false)}
+      >
       {hasNew && (
         <div style={{
           position: 'absolute',
@@ -59,6 +67,8 @@ const ComicCard = ({ item }) => {
         </div>
       </Card.Body>
     </Card>
+    <QuickView comic={item} show={showQuickView} onHide={() => setShowQuickView(false)} />
+    </>
   );
 };
 

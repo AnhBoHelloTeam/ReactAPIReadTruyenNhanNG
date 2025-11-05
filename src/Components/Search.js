@@ -23,6 +23,7 @@ const Search = () => {
     genres: [],
     status: '',
     sort: 'last_update',
+    year: '',
   });
   const [genres, setGenres] = useState([]);
   const itemsPerPage = 24;
@@ -43,15 +44,17 @@ const Search = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiClient.get('/tim-kiem', {
-          params: {
-            keyword: query,
-            genres: filters.genres.join(','),
-            status: filters.status,
-            sort: filters.sort,
-            page: currentPage,
-          },
-        });
+        const params = {
+          keyword: query,
+          genres: filters.genres.join(','),
+          status: filters.status,
+          sort: filters.sort,
+          page: currentPage,
+        };
+        if (filters.year) {
+          params.year = filters.year;
+        }
+        const response = await apiClient.get('/tim-kiem', { params });
         setData(response.data);
         setLoading(false);
       } catch (error) {
@@ -156,7 +159,7 @@ const Search = () => {
                       <option value="sap-ra-mat">Sắp ra mắt</option>
                     </Form.Select>
                   </Form.Group>
-                  <Form.Group>
+                  <Form.Group style={{ marginBottom: 16 }}>
                     <Form.Label style={{ fontWeight: 600, marginBottom: 8 }}>Sắp xếp</Form.Label>
                     <Form.Select
                       name="sort"
@@ -168,6 +171,31 @@ const Search = () => {
                       <option value="name">Tên</option>
                     </Form.Select>
                   </Form.Group>
+                  <Form.Group style={{ marginBottom: 16 }}>
+                    <Form.Label style={{ fontWeight: 600, marginBottom: 8 }}>Năm</Form.Label>
+                    <Form.Select
+                      name="year"
+                      value={filters.year || ''}
+                      onChange={handleFilterChange}
+                    >
+                      <option value="">Tất cả</option>
+                      {[...Array(10)].map((_, i) => {
+                        const year = new Date().getFullYear() - i;
+                        return <option key={year} value={year}>{year}</option>;
+                      })}
+                    </Form.Select>
+                  </Form.Group>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => {
+                      setFilters({ genres: [], status: '', sort: 'last_update', year: '' });
+                      setCurrentPage(1);
+                    }}
+                    style={{ width: '100%' }}
+                  >
+                    Xóa bộ lọc
+                  </Button>
                 </Form>
               </Card.Body>
             </Card>
