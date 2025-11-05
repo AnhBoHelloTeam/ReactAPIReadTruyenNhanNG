@@ -231,6 +231,7 @@ const DetailPage = () => {
                   <Col md={3} key={index}>
                     <Card>
                       <LazyLoadImage
+                        className="card-img-top"
                         src={getThumbUrl(comic.thumb_url)}
                         alt={comic.name}
                         effect="blur"

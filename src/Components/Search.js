@@ -164,6 +164,7 @@ const Search = () => {
                     <Col md={3} key={index}>
                       <Card className="card-equal-height">
                         <LazyLoadImage
+                          className="card-img-top"
                           src={getThumbUrl(item.thumb_url)}
                           alt={item.name}
                           effect="blur"

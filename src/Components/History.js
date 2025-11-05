@@ -36,6 +36,7 @@ const History = () => {
                   <Col md={3} key={index}>
                     <Card className="card-equal-height">
                       <LazyLoadImage
+                        className="card-img-top"
                         src={`https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`}
                         alt={comic.name}
                         effect="blur"

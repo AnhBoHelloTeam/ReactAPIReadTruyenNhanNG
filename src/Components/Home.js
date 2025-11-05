@@ -97,6 +97,7 @@ const Home = () => {
                   <Col md={3} key={index}>
                     <Card className="card-equal-height">
                       <LazyLoadImage
+                        className="card-img-top"
                         src={getThumbUrl(comic.thumb_url)}
                         alt={comic.name}
                         effect="blur"
@@ -132,6 +133,7 @@ const Home = () => {
                   <Col md={3} key={`ongoing-${index}`}>
                     <Card className="card-equal-height">
                       <LazyLoadImage
+                        className="card-img-top"
                         src={getThumbUrl(item.thumb_url)}
                         alt={item.name}
                         effect="blur"
@@ -167,6 +169,7 @@ const Home = () => {
                   <Col md={3} key={`completed-${index}`}>
                     <Card className="card-equal-height">
                       <LazyLoadImage
+                        className="card-img-top"
                         src={getThumbUrl(item.thumb_url)}
                         alt={item.name}
                         effect="blur"
@@ -202,6 +205,7 @@ const Home = () => {
                   <Col md={3} key={`upcoming-${index}`}>
                     <Card className="card-equal-height">
                       <LazyLoadImage
+                        className="card-img-top"
                         src={getThumbUrl(item.thumb_url)}
                         alt={item.name}
                         effect="blur"
@@ -305,6 +309,7 @@ const Home = () => {
               <Col md={3} key={index}>
                 <Card className="card-equal-height">
                   <LazyLoadImage
+                    className="card-img-top"
                     src={getThumbUrl(item.thumb_url)}
                     alt={item.name}
                     effect="blur"

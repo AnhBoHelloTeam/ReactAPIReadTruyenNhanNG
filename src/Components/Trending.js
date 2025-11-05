@@ -151,8 +151,9 @@ const Trending = () => {
               return (
                 <Col md={3} key={index}>
                   <Card className="card-equal-height">
-                    <LazyLoadImage
-                      src={getThumbUrl(item.thumb_url)}
+                        <LazyLoadImage
+                          className="card-img-top"
+                          src={getThumbUrl(item.thumb_url)}
                       alt={item.name}
                       effect="blur"
                       onError={onImageErrorHide}
