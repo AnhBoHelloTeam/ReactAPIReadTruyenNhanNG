@@ -12,12 +12,13 @@ const Reader = () => {
   const navigate = useNavigate();
   const api = searchParams.get('api') || '';
   const slug = searchParams.get('slug') || '';
-  const prevApi = searchParams.get('prev') || '';
-  const nextApi = searchParams.get('next') || '';
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [prefetchNext, setPrefetchNext] = useState(null);
+  const [chapters, setChapters] = useState([]);
+  const [computedPrev, setComputedPrev] = useState('');
+  const [computedNext, setComputedNext] = useState('');
 
   const fetchChapter = useCallback(async () => {
     if (!api) return;
@@ -37,7 +38,30 @@ const Reader = () => {
     fetchChapter();
   }, [fetchChapter]);
 
-  // keep navigation simple: use prev/next from URL if present
+  // Fetch comic chapters by slug to compute stable prev/next
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      if (!slug) return;
+      try {
+        const res = await axios.get(`https://otruyenapi.com/v1/api/truyen-tranh/${slug}`);
+        if (!cancelled) {
+          const list = res?.data?.data?.item?.chapters?.[0]?.server_data || [];
+          setChapters(list);
+        }
+      } catch (_) {}
+    };
+    run();
+    return () => { cancelled = true; };
+  }, [slug]);
+
+  // Compute prev/next whenever api or chapters change
+  useEffect(() => {
+    if (!api || !chapters.length) return;
+    const idx = chapters.findIndex((c) => c.chapter_api_data === api);
+    setComputedPrev(idx > 0 ? chapters[idx - 1].chapter_api_data : '');
+    setComputedNext(idx >= 0 && idx < chapters.length - 1 ? chapters[idx + 1].chapter_api_data : '');
+  }, [api, chapters]);
 
   // Restore scroll position for this chapter
   useEffect(() => {
@@ -53,37 +77,37 @@ const Reader = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, [api]);
 
-  // Keyboard navigation: Left = prev, Right = next (simple)
+  // Keyboard navigation: Left = prev, Right = next
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === 'ArrowLeft' && prevApi) {
+      if (e.key === 'ArrowLeft' && computedPrev) {
         e.preventDefault();
         setSearchParams((p) => {
           const n = new URLSearchParams(p);
-          n.set('api', prevApi);
+          n.set('api', computedPrev);
           // prev/next become relative to the new api; keep existing if provided in URL
           return n;
         });
-      } else if (e.key === 'ArrowRight' && nextApi) {
+      } else if (e.key === 'ArrowRight' && computedNext) {
         e.preventDefault();
         setSearchParams((p) => {
           const n = new URLSearchParams(p);
-          n.set('api', nextApi);
+          n.set('api', computedNext);
           return n;
         });
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [prevApi, nextApi, setSearchParams]);
+  }, [computedPrev, computedNext, setSearchParams]);
 
   // Simple prefetch for next chapter images
   useEffect(() => {
     let aborted = false;
     const run = async () => {
-      if (!nextApi) return;
+      if (!computedNext) return;
       try {
-        const res = await axios.get(nextApi);
+        const res = await axios.get(computedNext);
         if (aborted) return;
         setPrefetchNext(res.data);
         const nItem = res.data?.data?.item;
@@ -96,7 +120,7 @@ const Reader = () => {
     };
     run();
     return () => { aborted = true; };
-  }, [nextApi]);
+  }, [computedNext]);
 
   if (!api) return <p>Thiếu tham số chapter api.</p>;
   if (loading) return <p>Loading...</p>;
@@ -106,19 +130,19 @@ const Reader = () => {
   const cdn = data?.data?.domain_cdn;
 
   const handleGoPrev = () => {
-    if (!prevApi) return;
+    if (!computedPrev) return;
     setSearchParams((p) => {
       const n = new URLSearchParams(p);
-      n.set('api', prevApi);
+      n.set('api', computedPrev);
       return n;
     });
   };
 
   const handleGoNext = () => {
-    if (!nextApi) return;
+    if (!computedNext) return;
     setSearchParams((p) => {
       const n = new URLSearchParams(p);
-      n.set('api', nextApi);
+      n.set('api', computedNext);
       return n;
     });
   };
@@ -146,8 +170,8 @@ const Reader = () => {
         <Menu />
         <div style={{ margin: '10px 0', display: 'flex', gap: 8 }}>
           <Button as={Link} to={-1}>Quay lại</Button>
-          <Button variant="secondary" disabled={!prevApi} onClick={handleGoPrev}>← Chương trước</Button>
-          <Button variant="secondary" disabled={!nextApi} onClick={handleGoNext}>Chương sau →</Button>
+          <Button variant="secondary" disabled={!computedPrev} onClick={handleGoPrev}>← Chương trước</Button>
+          <Button variant="secondary" disabled={!computedNext} onClick={handleGoNext}>Chương sau →</Button>
         </div>
         <h5 style={{ marginBottom: 10 }}>
           {chapter?.comic_name} - {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
