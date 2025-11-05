@@ -18,6 +18,8 @@ const DetailPage = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fav, setFav] = useState(false);
+  const [chapterLimitByServer, setChapterLimitByServer] = useState({});
+  const [descOrder, setDescOrder] = useState(true);
   const item = getdata?.data?.data?.item;
 
   useEffect(() => {
@@ -188,28 +190,49 @@ const DetailPage = () => {
           </Col>
           <Col md={8}>
             <Card>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px' }}>
+                <h5 style={{ margin: 0 }}>Danh sách chap</h5>
+                <Button size="sm" variant="secondary" onClick={() => setDescOrder((v) => !v)}>
+                  {descOrder ? 'Thứ tự: Mới → Cũ' : 'Thứ tự: Cũ → Mới'}
+                </Button>
+              </div>
               {item?.chapters && item.chapters.length > 0 ? (
-                item.chapters.map((chapter, index) => (
-                  <div key={index} style={{ padding: '10px 12px' }}>
-                    <h5 style={{ marginBottom: 8 }}>{chapter.server_name}</h5>
-                    <div className="chapters-panel">
-                      {chapter.server_data && chapter.server_data.length > 0 ? (
-                        chapter.server_data.map((listchapter, subIndex) => {
-                          const prevApi = chapter.server_data[subIndex - 1]?.chapter_api_data;
-                          const nextApi = chapter.server_data[subIndex + 1]?.chapter_api_data;
-                          const href = `/read?api=${encodeURIComponent(listchapter.chapter_api_data)}${prevApi ? `&prev=${encodeURIComponent(prevApi)}` : ''}${nextApi ? `&next=${encodeURIComponent(nextApi)}` : ''}`;
-                          return (
-                            <Link className="chapter-chip" key={subIndex} to={href}>
-                              {listchapter.chapter_name}
-                            </Link>
-                          );
-                        })
-                      ) : (
-                        <span>Chapters is coming soon...</span>
-                      )}
+                item.chapters.map((chapter, serverIndex) => {
+                  const raw = chapter.server_data || [];
+                  const data = descOrder ? [...raw].reverse() : raw;
+                  const limit = chapterLimitByServer[serverIndex] ?? 60;
+                  const visible = data.slice(0, limit);
+                  const canMore = data.length > visible.length;
+                  return (
+                    <div key={serverIndex} style={{ padding: '8px 12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <h6 style={{ margin: 0 }}>{chapter.server_name}</h6>
+                        {canMore && (
+                          <Button size="sm" variant="outline-light" onClick={() => setChapterLimitByServer((s) => ({ ...s, [serverIndex]: (s[serverIndex] ?? 60) + 60 }))}>
+                            Tải thêm
+                          </Button>
+                        )}
+                      </div>
+                      <div className="chapters-panel" style={{ maxHeight: 360 }}>
+                        {visible.length > 0 ? (
+                          visible.map((listchapter, subIndex) => {
+                            const absoluteIndex = descOrder ? raw.length - 1 - subIndex : subIndex;
+                            const prevApi = raw[absoluteIndex - 1]?.chapter_api_data;
+                            const nextApi = raw[absoluteIndex + 1]?.chapter_api_data;
+                            const href = `/read?api=${encodeURIComponent(listchapter.chapter_api_data)}${prevApi ? `&prev=${encodeURIComponent(prevApi)}` : ''}${nextApi ? `&next=${encodeURIComponent(nextApi)}` : ''}`;
+                            return (
+                              <Link className="chapter-chip" key={subIndex} to={href}>
+                                {listchapter.chapter_name}
+                              </Link>
+                            );
+                          })
+                        ) : (
+                          <span>Chapters is coming soon...</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <span>Chapters is coming soon...</span>
               )}
