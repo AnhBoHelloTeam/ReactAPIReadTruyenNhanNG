@@ -1,7 +1,7 @@
 import { apiClient } from '../api/client';
 import { getThumbUrl, onImageErrorHide } from '../utils/image';
 import React, { useEffect, useState } from 'react';
-import { Badge, Button, Card, Col, Container, ListGroup, Modal, Row } from 'react-bootstrap';
+import { Badge, Button, Card, Col, Container, Modal, Row } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
 import { Link, useParams } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -188,37 +188,31 @@ const DetailPage = () => {
           </Col>
           <Col md={8}>
             <Card>
-              <ListGroup className="scrollable-list">
-                {item?.chapters && item.chapters.length > 0 ? (
-                  item.chapters.map((chapter, index) => (
-                    <div key={index}>
-                      <h5>{chapter.server_name}</h5>
-                      <ListGroup.Item>
-                        {chapter.server_data && chapter.server_data.length > 0 ? (
-                          chapter.server_data.map((listchapter, subIndex) => {
-                            const prevApi = chapter.server_data[subIndex - 1]?.chapter_api_data;
-                            const nextApi = chapter.server_data[subIndex + 1]?.chapter_api_data;
-                            const href = `/read?api=${encodeURIComponent(listchapter.chapter_api_data)}${prevApi ? `&prev=${encodeURIComponent(prevApi)}` : ''}${nextApi ? `&next=${encodeURIComponent(nextApi)}` : ''}`;
-                            return (
-                              <Link
-                                className="chapter_click"
-                                key={subIndex}
-                                to={href}
-                              >
-                                Chapter: {listchapter.chapter_name}
-                              </Link>
-                            );
-                          })
-                        ) : (
-                          <span>Chapters is coming soon...</span>
-                        )}
-                      </ListGroup.Item>
+              {item?.chapters && item.chapters.length > 0 ? (
+                item.chapters.map((chapter, index) => (
+                  <div key={index} style={{ padding: '10px 12px' }}>
+                    <h5 style={{ marginBottom: 8 }}>{chapter.server_name}</h5>
+                    <div className="chapters-panel">
+                      {chapter.server_data && chapter.server_data.length > 0 ? (
+                        chapter.server_data.map((listchapter, subIndex) => {
+                          const prevApi = chapter.server_data[subIndex - 1]?.chapter_api_data;
+                          const nextApi = chapter.server_data[subIndex + 1]?.chapter_api_data;
+                          const href = `/read?api=${encodeURIComponent(listchapter.chapter_api_data)}${prevApi ? `&prev=${encodeURIComponent(prevApi)}` : ''}${nextApi ? `&next=${encodeURIComponent(nextApi)}` : ''}`;
+                          return (
+                            <Link className="chapter-chip" key={subIndex} to={href}>
+                              {listchapter.chapter_name}
+                            </Link>
+                          );
+                        })
+                      ) : (
+                        <span>Chapters is coming soon...</span>
+                      )}
                     </div>
-                  ))
-                ) : (
-                  <span>Chapters is coming soon...</span>
-                )}
-              </ListGroup>
+                  </div>
+                ))
+              ) : (
+                <span>Chapters is coming soon...</span>
+              )}
             </Card>
           </Col>
         </Row>

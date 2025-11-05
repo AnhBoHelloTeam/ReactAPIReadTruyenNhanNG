@@ -24,6 +24,33 @@ code {
   text-decoration: underline;
 }
 
+/* Chapters scrollable panel */
+.chapters-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 320px;
+  overflow: auto;
+  padding: 8px;
+  background: #0f1115;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+}
+
+.chapter-chip {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #1f2937;
+  color: #9ecbff !important;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.chapter-chip:hover {
+  background: #243445;
+  color: #d0e7ff !important;
+}
+
 .dropdown-menu.show {
   height: 500px;
   overflow: auto;
