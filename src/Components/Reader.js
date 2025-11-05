@@ -75,13 +75,6 @@ const Reader = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [prevApi, nextApi, setSearchParams]);
 
-  if (!api) return <p>Thiếu tham số chapter api.</p>;
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  const chapter = data?.data?.item;
-  const cdn = data?.data?.domain_cdn;
-
   // Simple prefetch for next chapter images if nextApi provided
   useEffect(() => {
     let aborted = false;
@@ -103,6 +96,13 @@ const Reader = () => {
     run();
     return () => { aborted = true; };
   }, [nextApi]);
+
+  if (!api) return <p>Thiếu tham số chapter api.</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  const chapter = data?.data?.item;
+  const cdn = data?.data?.domain_cdn;
 
   const handleGoPrev = () => {
     if (!prevApi) return;
