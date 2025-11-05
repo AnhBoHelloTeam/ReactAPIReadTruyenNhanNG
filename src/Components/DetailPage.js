@@ -205,10 +205,10 @@ const DetailPage = () => {
                       const absoluteIndex = descOrder ? idx : raw.length - 1 - idx;
                       const prevApi = raw[absoluteIndex - 1]?.chapter_api_data;
                       const nextApi = raw[absoluteIndex + 1]?.chapter_api_data;
-                      const href = `/read?api=${encodeURIComponent(c.chapter_api_data)}${prevApi ? `&prev=${encodeURIComponent(prevApi)}` : ''}${nextApi ? `&next=${encodeURIComponent(nextApi)}` : ''}`;
+                      const href = `/read?api=${encodeURIComponent(c.chapter_api_data)}&slug=${encodeURIComponent(item.slug)}${prevApi ? `&prev=${encodeURIComponent(prevApi)}` : ''}${nextApi ? `&next=${encodeURIComponent(nextApi)}` : ''}`;
                       return (
                         <Link key={idx} to={href} className="chapter-row">
-                          <span className="chapter-name">{c.chapter_name}</span>
+                          <span className="chapter-name">{c.chapter_name?.toString().startsWith('Ch') ? c.chapter_name : `Chương ${c.chapter_name}`}</span>
                         </Link>
                       );
                     })}
