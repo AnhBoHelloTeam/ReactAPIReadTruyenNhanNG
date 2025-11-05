@@ -9,6 +9,8 @@ import { apiClient } from '../api/client';
 import { getThumbUrl, onImageErrorHide } from '../utils/image';
 import ComicCard from './UI/ComicCard';
 import SectionTitle from './UI/SectionTitle';
+import SkeletonGrid from './UI/SkeletonLoader';
+import ErrorState from './UI/ErrorState';
 
 const Author = () => {
   const { slug } = useParams();
@@ -39,8 +41,22 @@ const Author = () => {
     fetchData();
   }, [slug, currentPage]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    return (
+      <Container>
+        <Menu />
+        <SkeletonGrid count={8} />
+      </Container>
+    );
+  }
+  if (error) {
+    return (
+      <Container>
+        <Menu />
+        <ErrorState error={error} onRetry={() => window.location.reload()} />
+      </Container>
+    );
+  }
 
   const items = data?.data?.items || [];
   const totalItems = data?.data?.params?.pagination?.totalItems || 0;

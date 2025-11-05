@@ -481,7 +481,7 @@ h1, h2, h4, h5, h6 {
 
 /* Loading skeleton */
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: loading 1.5s ease-in-out infinite;
   border-radius: 8px;
@@ -493,8 +493,90 @@ h1, h2, h4, h5, h6 {
 }
 
 .skeleton-card {
-  height: 400px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.1);
   border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Search suggestions */
+.search-suggestions {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestion-item {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.suggestion-item:hover {
+  background: #f5f7fa !important;
+  color: #2563eb !important;
+}
+
+/* Fade in animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.card-equal-height {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Scroll to top button */
+.scroll-to-top {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-to-top:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
 }
 
 /* Empty state */
@@ -502,6 +584,7 @@ h1, h2, h4, h5, h6 {
   text-align: center;
   padding: 60px 20px;
   color: #666666 !important;
+  animation: fadeInUp 0.5s ease-out;
 }
 .empty-state p {
   color: #666666 !important;
@@ -511,7 +594,133 @@ h1, h2, h4, h5, h6 {
 .empty-state-icon {
   font-size: 4rem;
   margin-bottom: 16px;
-  opacity: 0.5;
+  opacity: 0.6;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Card animations */
+.card-equal-height {
+  animation: fadeInUp 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.row > [class*="col-"]:nth-child(1) .card-equal-height { animation-delay: 0.05s; }
+.row > [class*="col-"]:nth-child(2) .card-equal-height { animation-delay: 0.1s; }
+.row > [class*="col-"]:nth-child(3) .card-equal-height { animation-delay: 0.15s; }
+.row > [class*="col-"]:nth-child(4) .card-equal-height { animation-delay: 0.2s; }
+.row > [class*="col-"]:nth-child(n+5) .card-equal-height { animation-delay: 0.25s; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+}
+
+/* Image loading placeholder */
+.lazy-load-image-background {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+/* Image hover overlay effect */
+.card-equal-height .card-img-top {
+  position: relative;
+}
+
+.card-equal-height .card-img-top::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-equal-height:hover .card-img-top::after {
+  opacity: 1;
+}
+
+/* Better spacing */
+.row + .row {
+  margin-top: 8px;
+}
+
+/* Link hover effects */
+a {
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* Badge improvements */
+.badge {
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+/* Form improvements */
+.form-control:focus,
+.form-select:focus {
+  transform: scale(1.01);
+}
+
+/* Button improvements */
+.btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Pagination improvements */
+.pagination .page-link {
+  border-radius: 8px;
+  margin: 0 4px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.pagination .page-item.active .page-link {
+  font-weight: 700;
 }
 
 /* Responsive styles */
@@ -522,6 +731,7 @@ h1, h2, h4, h5, h6 {
 
   .pagination-container {
     font-size: 0.9rem;
+    padding: 12px 0;
   }
 
   .dropdown-menu.show {
@@ -533,11 +743,11 @@ h1, h2, h4, h5, h6 {
   }
 
   .card-title-ellipsis {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .category-ellipsis {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .card-text {
@@ -549,14 +759,34 @@ h1, h2, h4, h5, h6 {
     padding: 5px 10px;
   }
 
-  .history-section,
-  .hot-comics-section {
-    padding: 10px;
+  .hero-section {
+    padding: 24px;
   }
 
-  .history-section .card,
-  .hot-comics-section .card {
-    margin-bottom: 10px;
+  .section-title {
+    font-size: 1.25rem;
+    margin: 24px 0 16px;
+  }
+
+  .scroll-to-top {
+    width: 44px;
+    height: 44px;
+    bottom: 80px;
+    right: 16px;
+    font-size: 1.2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.5rem;
   }
 }
 
@@ -567,6 +797,7 @@ h1, h2, h4, h5, h6 {
 
   .pagination-container {
     font-size: 0.8rem;
+    padding: 10px 0;
   }
 
   .card-equal-height .card-img-top {
@@ -575,6 +806,7 @@ h1, h2, h4, h5, h6 {
 
   .card-title-ellipsis {
     font-size: 0.9rem;
+    min-height: 40px;
   }
 
   .category-ellipsis {
@@ -582,11 +814,37 @@ h1, h2, h4, h5, h6 {
   }
 
   .card-text {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
   }
 
   .btn-sm {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     padding: 4px 8px;
+  }
+
+  .hero-section {
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+    margin: 20px 0 12px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .scroll-to-top {
+    width: 40px;
+    height: 40px;
+    bottom: 70px;
+    right: 12px;
+    font-size: 1rem;
   }
 }

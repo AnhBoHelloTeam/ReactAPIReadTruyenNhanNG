@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import Menu from './Include/Menu';
 import { apiClient } from '../api/client';
 import SectionTitle from './UI/SectionTitle';
+import SkeletonGrid from './UI/SkeletonLoader';
+import ErrorState from './UI/ErrorState';
 
 const Genres = () => {
   const [data, setData] = useState([]);
@@ -32,8 +34,22 @@ const Genres = () => {
     return data.filter((g) => g.name.toLowerCase().includes(q) || g.slug.toLowerCase().includes(q));
   }, [data, query]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    return (
+      <Container>
+        <Menu />
+        <SkeletonGrid count={8} />
+      </Container>
+    );
+  }
+  if (error) {
+    return (
+      <Container>
+        <Menu />
+        <ErrorState error={error} onRetry={() => window.location.reload()} />
+      </Container>
+    );
+  }
 
   return (
     <>

@@ -119,27 +119,46 @@ const Menu = () => {
                 </Form>
                 {showSuggest && suggestions.length > 0 && (
                   <div
+                    className="search-suggestions"
                     style={{
                       position: 'absolute',
                       top: '100%',
                       left: 0,
                       right: 0,
-                      background: '#fff',
-                      border: '1px solid #e5e5e5',
+                      background: '#ffffff',
+                      border: '1px solid rgba(0,0,0,0.1)',
+                      borderRadius: '8px',
                       zIndex: 1100,
                       maxHeight: 400,
                       overflowY: 'auto',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                      marginTop: '4px',
                     }}
                     onMouseDown={(e) => e.preventDefault()}
                   >
                     {suggestions.map((s, idx) => (
                       <div
                         key={idx}
-                        style={{ padding: '8px 12px', cursor: 'pointer' }}
+                        className="suggestion-item"
+                        style={{
+                          padding: '12px 16px',
+                          cursor: 'pointer',
+                          borderBottom: idx < suggestions.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                          transition: 'all 0.2s ease',
+                          color: '#1a1a1a',
+                        }}
                         onClick={() => handleSelectSuggest(s.slug)}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = '#f5f7fa';
+                          e.target.style.color = '#2563eb';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = 'transparent';
+                          e.target.style.color = '#1a1a1a';
+                        }}
                         title={s.name}
                       >
-                        {s.name}
+                        🔍 {s.name}
                       </div>
                     ))}
                   </div>

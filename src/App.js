@@ -10,10 +10,12 @@ import Reader from './Components/Reader';
 import Author from './Components/Author';
 import Genres from './Components/Genres';
 import Favorites from './Components/Favorites';
+import ScrollToTop from './Components/UI/ScrollToTop';
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/comics/:slug" element={<DetailPage />} />

@@ -9,6 +9,8 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 import ComicCard from './UI/ComicCard';
 import SectionTitle from './UI/SectionTitle';
+import SkeletonGrid from './UI/SkeletonLoader';
+import ErrorState from './UI/ErrorState';
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -72,8 +74,22 @@ const Home = () => {
     fetchBlocks();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    return (
+      <Container>
+        <Menu />
+        <SkeletonGrid count={8} />
+      </Container>
+    );
+  }
+  if (error) {
+    return (
+      <Container>
+        <Menu />
+        <ErrorState error={error} onRetry={() => window.location.reload()} />
+      </Container>
+    );
+  }
 
   const totalItems = getdata?.data?.params?.pagination?.totalItems || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);

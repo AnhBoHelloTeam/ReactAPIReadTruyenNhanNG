@@ -10,6 +10,8 @@ import Menu from './Include/Menu';
 import { addFavorite, removeFavorite, isFavorite } from '../utils/favorites';
 import ComicCard from './UI/ComicCard';
 import SectionTitle from './UI/SectionTitle';
+import SkeletonGrid from './UI/SkeletonLoader';
+import ErrorState from './UI/ErrorState';
 
 const DetailPage = () => {
   const { slug } = useParams();
@@ -87,8 +89,27 @@ const DetailPage = () => {
     if (item) fetchRelated();
   }, [item]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    return (
+      <Container>
+        <Menu />
+        <Row>
+          <Col md={12}>
+            <div className="skeleton" style={{ height: '400px', borderRadius: '12px', marginBottom: '24px' }}></div>
+          </Col>
+        </Row>
+        <SkeletonGrid count={4} />
+      </Container>
+    );
+  }
+  if (error) {
+    return (
+      <Container>
+        <Menu />
+        <ErrorState error={error} onRetry={() => window.location.reload()} />
+      </Container>
+    );
+  }
 
   const handleClose = () => setIsModalOpen(false);
 
