@@ -170,13 +170,13 @@ const DetailPage = () => {
                       <ListGroup.Item>
                         {chapter.server_data && chapter.server_data.length > 0 ? (
                           chapter.server_data.map((listchapter, subIndex) => (
-                            <div
+                            <Link
                               className="chapter_click"
                               key={subIndex}
-                              onClick={() => handleReadChapter(listchapter.chapter_api_data)}
+                              to={`/read?api=${encodeURIComponent(listchapter.chapter_api_data)}`}
                             >
                               Chapter: {listchapter.chapter_name}
-                            </div>
+                            </Link>
                           ))
                         ) : (
                           <span>Chapters is coming soon...</span>

@@ -6,6 +6,7 @@ import Genre from './Components/Genre';
 import Trending from './Components/Trending';
 import Search from './Components/Search';
 import History from './Components/History'; // Import History
+import Reader from './Components/Reader';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/trending/:slug" element={<Trending />} />
         <Route path="/search" element={<Search />} />
         <Route path="/history" element={<History />} />
+        <Route path="/read" element={<Reader />} />
       </Routes>
     </BrowserRouter>
   );
