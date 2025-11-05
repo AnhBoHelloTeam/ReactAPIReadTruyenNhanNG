@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link, useNavigate, useParams } from 'react-router-dom';
 import { Container, Button, Form } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
 import axios from 'axios';
 import SkeletonGrid from './UI/SkeletonLoader';
@@ -193,23 +191,32 @@ const Reader = () => {
             </p>
           </div>
         </div>
-        <div className="chapter-container">
+        <div className="chapter-container" style={{ 
+          maxWidth: '1400px', 
+          margin: '0 auto', 
+          padding: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}>
           {chapter?.chapter_image?.length ? (
             chapter.chapter_image.map((img, idx) => {
               const imageUrl = `${cdn}/${chapter.chapter_path}/${img.image_file}`;
               return (
-                <LazyLoadImage
+                <img
                   key={idx}
                   src={imageUrl}
                   alt={`Page ${idx + 1}`}
-                  effect="blur"
                   onError={onImgErrorRetry}
+                  loading="lazy"
                   style={{ 
-                    width: '100%',
+                    maxWidth: '100%',
+                    width: 'auto',
                     height: 'auto',
-                    marginBottom: '10px',
+                    marginBottom: '20px',
                     borderRadius: '8px',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)'
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+                    display: 'block'
                   }}
                 />
               );

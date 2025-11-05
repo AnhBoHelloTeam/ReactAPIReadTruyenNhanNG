@@ -208,28 +208,31 @@ code {
 }
 
 .chapter-container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media (max-width: 768px) {
   .chapter-container {
-    padding: 0 12px;
+    padding: 12px;
   }
 }
 
 .chapter-container img {
-  width: 100%;
+  max-width: 100%;
+  width: auto;
   height: auto;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: box-shadow 0.3s ease;
-}
-.chapter-container img:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* Style cho card truyện đều nhau */
