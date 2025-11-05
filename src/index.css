@@ -5,6 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #0f1115;
+  color: #e4e6eb;
 }
 
 code {
@@ -14,10 +16,11 @@ code {
 
 .chapter_click {
   cursor: pointer;
+  color: #9ecbff;
 }
 
 .chapter_click:hover {
-  color: brown;
+  color: #d0e7ff;
   text-decoration: underline;
 }
 
@@ -30,9 +33,11 @@ code {
   position: sticky;
   bottom: 0;
   width: 100%;
-  background-color: #fff;
+  background-color: rgba(15,17,21,0.95);
+  backdrop-filter: blur(6px);
   padding: 10px 0;
   z-index: 1000;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 
 .chapter-container {
@@ -52,6 +57,10 @@ code {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: #151922;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
 
 .card-equal-height .card-img-top {
@@ -65,6 +74,13 @@ code {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  color: #e4e6eb;
+}
+
+.card-equal-height:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  border-color: rgba(158,203,255,0.25);
 }
 
 /* Style cho tên truyện với ellipsis */
@@ -74,6 +90,7 @@ code {
   text-overflow: ellipsis;
   max-width: 100%;
   margin-bottom: 0.5rem;
+  color: #ffffff;
 }
 
 /* Style cho thể loại với ellipsis */
@@ -84,6 +101,46 @@ code {
   display: inline-block;
   max-width: 100%;
   margin-bottom: 0.5rem;
+}
+
+.badge.bg-info {
+  background-color: #1f6feb !important;
+}
+
+h3, .h3 {
+  color: #ffffff;
+  margin: 18px 0 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* Navbar dark */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+}
+.navbar.bg-body-tertiary {
+  background-color: #111520 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.navbar .navbar-brand, .navbar .nav-link, .navbar .dropdown-item, .navbar .navbar-text {
+  color: #e4e6eb !important;
+}
+.navbar .nav-link:hover, .navbar .dropdown-item:hover {
+  color: #ffffff !important;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+.btn-outline-danger:hover {
+  background-color: #f87171;
+  border-color: #f87171;
 }
 
 /* Responsive styles */

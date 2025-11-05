@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Menu from './Include/Menu';
-import { apiClient } from '../api/client';
+import axios from 'axios';
 
 const Reader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,8 +23,7 @@ const Reader = () => {
     setLoading(true);
     setError(null);
     try {
-      const path = api.replace('/v1/api', '');
-      const res = await apiClient.get(path);
+      const res = await axios.get(api);
       setData(res.data);
     } catch (e) {
       setError(e.message);
@@ -81,8 +80,7 @@ const Reader = () => {
     const run = async () => {
       if (!nextApi) return;
       try {
-        const path = nextApi.replace('/v1/api', '');
-        const res = await apiClient.get(path);
+        const res = await axios.get(nextApi);
         if (aborted) return;
         setPrefetchNext(res.data);
         const nItem = res.data?.data?.item;

@@ -72,9 +72,9 @@ const Menu = () => {
 
   return (
     <div>
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg" className="bg-body-tertiary" sticky="top" data-bs-theme="dark">
         <Container>
-          <Navbar.Brand as={Link} to="/">NhanNG Truyen React</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/">NhanNG Truyen</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
