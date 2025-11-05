@@ -97,7 +97,7 @@ const Home = () => {
               <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 16, background: 'linear-gradient(135deg, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Kho Truyện Tranh Đa Dạng
               </h1>
-              <p style={{ fontSize: '1.1rem', color: 'rgba(228, 230, 235, 0.8)', marginBottom: 24 }}>
+              <p style={{ fontSize: '1.1rem', color: '#666666', marginBottom: 24 }}>
                 Khám phá hàng nghìn bộ truyện mới cập nhật mỗi ngày
               </p>
               <div className="stats-grid">

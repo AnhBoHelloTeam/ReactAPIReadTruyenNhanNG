@@ -31,8 +31,8 @@ const ComicCard = ({ item }) => {
             </span>
           ) : 'Others'}
         </Card.Text>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <small style={{ color: '#e4e6eb', fontWeight: 500 }}>{item.updatedAt}</small>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+          <small style={{ color: '#666666', fontWeight: 500, fontSize: '0.85rem' }}>{item.updatedAt}</small>
           <Button variant="primary btn-sm" as={Link} to={`/comics/${item.slug}`}>
             Chi tiết
           </Button>
