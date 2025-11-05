@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { apiClient } from '../../api/client';
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Form, Nav, Navbar, NavDropdown, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ const Menu = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://otruyenapi.com/v1/api/the-loai');
+        const response = await apiClient.get('/the-loai');
         setData(response.data);
       } catch (error) {}
     };

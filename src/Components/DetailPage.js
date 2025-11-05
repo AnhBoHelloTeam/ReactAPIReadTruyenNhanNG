@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { apiClient } from '../api/client';
+import { getThumbUrl, onImageErrorHide } from '../utils/image';
 import React, { useEffect, useState } from 'react';
 import { Badge, Button, Card, Col, Container, ListGroup, Modal, Row } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
@@ -20,7 +21,7 @@ const DetailPage = () => {
   useEffect(() => {
   const fetchData = async () => {
     try {
-      const response = await axios.get(`https://otruyenapi.com/v1/api/truyen-tranh/${slug}`);
+      const response = await apiClient.get(`/truyen-tranh/${slug}`);
       setData(response);
       setLoading(false);
       // Lưu lịch sử đọc
@@ -52,7 +53,7 @@ const DetailPage = () => {
       try {
         const categorySlug = item?.category[0]?.slug;
         if (categorySlug) {
-          const response = await axios.get(`https://otruyenapi.com/v1/api/the-loai/${categorySlug}`);
+          const response = await apiClient.get(`/the-loai/${categorySlug}`);
           setRelatedComics(response.data.data.items.slice(0, 4)); // Lấy 4 truyện liên quan
         }
       } catch (error) {
@@ -69,7 +70,7 @@ const DetailPage = () => {
 
   const handleReadChapter = async (chapter_api) => {
     try {
-      const response = await axios.get(`${chapter_api}`);
+      const response = await apiClient.get(chapter_api.replace('/v1/api', ''));
       setDataChapter(response.data);
       setLoading(false);
       setIsModalOpen(true);
@@ -127,9 +128,10 @@ const DetailPage = () => {
           <Col md={4}>
             <Card style={{ width: '100%' }}>
               <LazyLoadImage
-                src={`https://img.otruyenapi.com/uploads/comics/${item?.thumb_url}`}
+                src={getThumbUrl(item?.thumb_url)}
                 alt={item?.name}
                 effect="blur"
+                onError={onImageErrorHide}
                 style={{ width: '100%', height: 'auto' }}
               />
               <Card.Body>
@@ -198,9 +200,10 @@ const DetailPage = () => {
                   <Col md={3} key={index}>
                     <Card>
                       <LazyLoadImage
-                        src={`https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`}
+                        src={getThumbUrl(comic.thumb_url)}
                         alt={comic.name}
                         effect="blur"
+                        onError={onImageErrorHide}
                         style={{ width: '100%', height: 'auto' }}
                       />
                       <Card.Body>

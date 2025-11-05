@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../api/client';
+import { getThumbUrl, onImageErrorHide } from '../utils/image';
 import { Helmet } from 'react-helmet';
 import { Container, Row, Col, Card, Button, Badge, Pagination, Form } from 'react-bootstrap';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -26,7 +27,7 @@ const Search = () => {
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const response = await axios.get('https://otruyenapi.com/v1/api/the-loai');
+        const response = await apiClient.get('/the-loai');
         setGenres(response.data.data.items);
       } catch (error) {
         console.error('Error fetching genres:', error);
@@ -38,7 +39,7 @@ const Search = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://otruyenapi.com/v1/api/tim-kiem', {
+        const response = await apiClient.get('/tim-kiem', {
           params: {
             keyword: query,
             genres: filters.genres.join(','),
@@ -163,9 +164,10 @@ const Search = () => {
                     <Col md={3} key={index}>
                       <Card className="card-equal-height">
                         <LazyLoadImage
-                          src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
+                          src={getThumbUrl(item.thumb_url)}
                           alt={item.name}
                           effect="blur"
+                          onError={onImageErrorHide}
                           style={{ width: '100%', height: 'auto' }}
                         />
                         <Card.Body>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../api/client';
+import { getThumbUrl, onImageErrorHide } from '../utils/image';
 import { Helmet } from 'react-helmet';
 import { Container, Row, Col, Card, Button, Badge, Pagination } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
@@ -19,7 +20,7 @@ const Trending = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://otruyenapi.com/v1/api/danh-sach/${slug}?page=${currentPage}`);
+        const response = await apiClient.get(`/danh-sach/${slug}?page=${currentPage}`);
         setData(response);
         setLoading(false);
       } catch (error) {
@@ -75,9 +76,10 @@ const Trending = () => {
                 <Col md={3} key={index}>
                   <Card className="card-equal-height">
                     <LazyLoadImage
-                      src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
+                      src={getThumbUrl(item.thumb_url)}
                       alt={item.name}
                       effect="blur"
+                      onError={onImageErrorHide}
                       style={{ width: '100%', height: 'auto' }}
                     />
                     <Card.Body>

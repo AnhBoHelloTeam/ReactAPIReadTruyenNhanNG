@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../api/client';
+import { getThumbUrl, onImageErrorHide } from '../utils/image';
 import { Helmet } from 'react-helmet';
 import { Container, Row, Col, Card, Button, Badge, Pagination } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -19,7 +20,7 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
+        const response = await apiClient.get(
           `https://otruyenapi.com/v1/api/danh-sach/truyen-moi?page=${currentPage}`
         );
         setData(response);
@@ -35,7 +36,7 @@ const Home = () => {
   useEffect(() => {
     const fetchHotComics = async () => {
       try {
-        const response = await axios.get('https://otruyenapi.com/v1/api/danh-sach/truyen-hot');
+        const response = await apiClient.get('/danh-sach/truyen-hot');
         setHotComics(response.data.data.items.slice(0, 4)); // Lấy 4 truyện hot
       } catch (error) {
         console.error('Error fetching hot comics:', error);
@@ -71,9 +72,10 @@ const Home = () => {
                   <Col md={3} key={index}>
                     <Card className="card-equal-height">
                       <LazyLoadImage
-                        src={`https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`}
+                        src={getThumbUrl(comic.thumb_url)}
                         alt={comic.name}
                         effect="blur"
+                        onError={onImageErrorHide}
                         style={{ width: '100%', height: 'auto' }}
                       />
                       <Card.Body>
@@ -138,9 +140,10 @@ const Home = () => {
               <Col md={3} key={index}>
                 <Card className="card-equal-height">
                   <LazyLoadImage
-                    src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
+                    src={getThumbUrl(item.thumb_url)}
                     alt={item.name}
                     effect="blur"
+                    onError={onImageErrorHide}
                     style={{ width: '100%', height: 'auto' }}
                   />
                   <Card.Body>
