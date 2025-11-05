@@ -13,6 +13,8 @@ import BookmarkButton from './UI/BookmarkButton';
 import { shareChapter } from '../utils/bookmarks';
 import { preloadImages } from '../utils/imageCache';
 import Comments from './UI/Comments';
+import SkeletonGrid from './UI/SkeletonLoader';
+import ErrorState from './UI/ErrorState';
 
 const Reader = () => {
   const { preferences } = useReadingPreferences();
@@ -42,8 +44,12 @@ const Reader = () => {
     try {
       const res = await axios.get(api);
       setData(res.data);
+      const cdnFromApi = res.data?.data?.domain_cdn || res.data?.chapter_data?.domain_cdn;
+      if (cdnFromApi) {
+        localStorage.setItem('last_cdn', cdnFromApi);
+      }
     } catch (e) {
-      setError(e.message);
+      setError(e.message || 'Không thể tải chương truyện');
     } finally {
       setLoading(false);
     }
@@ -72,16 +78,17 @@ const Reader = () => {
 
   // Prefetch next chapter images
   useEffect(() => {
-    if (!data || !computedNext || !cdn) return;
+    if (!data || !computedNext) return;
+    const currentCdn = data?.data?.domain_cdn || data?.chapter_data?.domain_cdn || localStorage.getItem('last_cdn') || 'https://sv1.otruyencdn.com';
     
     const prefetchNextChapter = async () => {
       try {
         const nextRes = await axios.get(computedNext);
-        const nextChapter = nextRes?.data?.data?.item;
+        const nextChapter = nextRes?.data?.data?.item || nextRes?.data?.chapter_data;
         if (nextChapter?.chapter_image && nextChapter.chapter_image.length > 0) {
           const imageUrls = nextChapter.chapter_image
             .slice(0, 5) // Prefetch first 5 images
-            .map(img => `${cdn}/${nextChapter.chapter_path}/${img.image_file}`);
+            .map(img => `${currentCdn}/${nextChapter.chapter_path}/${img.image_file}`);
           preloadImages(imageUrls);
         }
       } catch (e) {
@@ -91,7 +98,7 @@ const Reader = () => {
     
     const timer = setTimeout(prefetchNextChapter, 2000);
     return () => clearTimeout(timer);
-  }, [data, computedNext, cdn]);
+  }, [data, computedNext]);
 
   // Compute prev/next whenever api or chapters change
   useEffect(() => {
@@ -216,12 +223,8 @@ const Reader = () => {
     return () => { aborted = true; };
   }, [computedNext]);
 
-  if (!api) return <p>Thiếu tham số chapter api.</p>;
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  const chapter = data?.data?.item;
-  const cdn = data?.data?.domain_cdn;
+  const chapter = data?.data?.item || data?.chapter_data;
+  const cdn = data?.data?.domain_cdn || data?.chapter_data?.domain_cdn || localStorage.getItem('last_cdn') || 'https://sv1.otruyencdn.com';
 
   const handleGoPrev = () => {
     if (!computedPrev) return;
@@ -264,6 +267,51 @@ const Reader = () => {
     url.searchParams.set('r', String(Date.now()));
     el.src = url.toString();
   };
+
+  if (!api) {
+    return (
+      <Container>
+        <Menu />
+        <div className="empty-state">
+          <div className="empty-state-icon">⚠️</div>
+          <p>Thiếu tham số chapter api.</p>
+        </div>
+      </Container>
+    );
+  }
+
+  if (loading) {
+    return (
+      <Container>
+        <Menu />
+        <SkeletonGrid count={4} />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Menu />
+        <ErrorState error={error} onRetry={fetchChapter} />
+      </Container>
+    );
+  }
+
+  if (!chapter) {
+    return (
+      <Container>
+        <Menu />
+        <div className="empty-state">
+          <div className="empty-state-icon">⚠️</div>
+          <p>Không tìm thấy dữ liệu chương truyện</p>
+          <Button variant="primary" onClick={() => fetchChapter()} style={{ marginTop: '20px' }}>
+            Thử lại
+          </Button>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <>
