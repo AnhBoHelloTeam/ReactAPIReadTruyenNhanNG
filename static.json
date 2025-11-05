@@ -1,0 +1,15 @@
+{
+  "routes": [
+    { "path": "/read/*", "destination": "/index.html" },
+    { "path": "/comics/*", "destination": "/index.html" },
+    { "path": "/genre/*", "destination": "/index.html" },
+    { "path": "/trending/*", "destination": "/index.html" },
+    { "path": "/author/*", "destination": "/index.html" },
+    { "path": "/favorites", "destination": "/index.html" },
+    { "path": "/history", "destination": "/index.html" },
+    { "path": "/search", "destination": "/index.html" },
+    { "path": "/", "destination": "/index.html" }
+  ]
+}
+
+
