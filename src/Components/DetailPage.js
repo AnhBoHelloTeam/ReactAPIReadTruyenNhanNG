@@ -151,7 +151,7 @@ const DetailPage = () => {
                 <Card.Text>
                   {item?.author && item.author.length > 0
                     ? item.author.map((author, index) => (
-                        <Badge bg="info" key={index}>
+                        <Badge bg="info" key={index} as={Link} to={`/author/${author.slug}`} style={{ cursor: 'pointer' }}>
                           {author.name}
                         </Badge>
                       ))

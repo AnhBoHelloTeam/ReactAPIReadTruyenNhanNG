@@ -7,6 +7,7 @@ import Trending from './Components/Trending';
 import Search from './Components/Search';
 import History from './Components/History'; // Import History
 import Reader from './Components/Reader';
+import Author from './Components/Author';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/history" element={<History />} />
         <Route path="/read" element={<Reader />} />
+        <Route path="/author/:slug" element={<Author />} />
       </Routes>
     </BrowserRouter>
   );
