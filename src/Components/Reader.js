@@ -176,43 +176,50 @@ const Reader = () => {
         <h5 style={{ marginBottom: 10 }}>
           {chapter?.comic_name} - {chapter?.chapter_name?.toString().startsWith('Ch') ? chapter?.chapter_name : `Chương ${chapter?.chapter_name}`}
         </h5>
-        {/* Sidebar chapter list */}
-        {chapters.length > 0 && (
-          <div className="chapters-list" style={{ maxHeight: 480, marginBottom: 12 }}>
-            {chapters.map((c, i) => (
-              <a
-                key={i}
-                href={`#`}
-                className="chapter-row"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setSearchParams((p) => {
-                    const n = new URLSearchParams(p);
-                    n.set('api', c.chapter_api_data);
-                    return n;
-                  });
-                }}
-              >
-                <span className="chapter-name">{c.chapter_name?.toString().startsWith('Ch') ? c.chapter_name : `Chương ${c.chapter_name}`}</span>
-              </a>
-            ))}
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-md-3" style={{ marginBottom: 12 }}>
+              {chapters.length > 0 && (
+                <div className="chapters-list" style={{ maxHeight: 560, position: 'sticky', top: 70 }}>
+                  {chapters.map((c, i) => (
+                    <a
+                      key={i}
+                      href={`#`}
+                      className="chapter-row"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setSearchParams((p) => {
+                          const n = new URLSearchParams(p);
+                          n.set('api', c.chapter_api_data);
+                          return n;
+                        });
+                      }}
+                    >
+                      <span className="chapter-name">{c.chapter_name?.toString().startsWith('Ch') ? c.chapter_name : `Chương ${c.chapter_name}`}</span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="col-md-9">
+              <div className="chapter-container">
+                {chapter?.chapter_image?.length ? (
+                  chapter.chapter_image.map((img, idx) => (
+                    <LazyLoadImage
+                      key={idx}
+                      src={`${cdn}/${chapter.chapter_path}/${img.image_file}`}
+                      alt={`Page ${idx + 1}`}
+                      effect="blur"
+                      onError={onImgErrorRetry}
+                      style={{ width: '100%', height: 'auto', marginBottom: '10px' }}
+                    />
+                  ))
+                ) : (
+                  <p>No images.</p>
+                )}
+              </div>
+            </div>
           </div>
-        )}
-        <div className="chapter-container">
-          {chapter?.chapter_image?.length ? (
-            chapter.chapter_image.map((img, idx) => (
-              <LazyLoadImage
-                key={idx}
-                src={`${cdn}/${chapter.chapter_path}/${img.image_file}`}
-                alt={`Page ${idx + 1}`}
-                effect="blur"
-                onError={onImgErrorRetry}
-                style={{ width: '100%', height: 'auto', marginBottom: '10px' }}
-              />
-            ))
-          ) : (
-            <p>No images.</p>
-          )}
         </div>
       </Container>
     </>
