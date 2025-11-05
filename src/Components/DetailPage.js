@@ -169,15 +169,20 @@ const DetailPage = () => {
                       <h5>{chapter.server_name}</h5>
                       <ListGroup.Item>
                         {chapter.server_data && chapter.server_data.length > 0 ? (
-                          chapter.server_data.map((listchapter, subIndex) => (
-                            <Link
-                              className="chapter_click"
-                              key={subIndex}
-                              to={`/read?api=${encodeURIComponent(listchapter.chapter_api_data)}`}
-                            >
-                              Chapter: {listchapter.chapter_name}
-                            </Link>
-                          ))
+                          chapter.server_data.map((listchapter, subIndex) => {
+                            const prevApi = chapter.server_data[subIndex - 1]?.chapter_api_data;
+                            const nextApi = chapter.server_data[subIndex + 1]?.chapter_api_data;
+                            const href = `/read?api=${encodeURIComponent(listchapter.chapter_api_data)}${prevApi ? `&prev=${encodeURIComponent(prevApi)}` : ''}${nextApi ? `&next=${encodeURIComponent(nextApi)}` : ''}`;
+                            return (
+                              <Link
+                                className="chapter_click"
+                                key={subIndex}
+                                to={href}
+                              >
+                                Chapter: {listchapter.chapter_name}
+                              </Link>
+                            );
+                          })
                         ) : (
                           <span>Chapters is coming soon...</span>
                         )}
